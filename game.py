@@ -9,15 +9,18 @@ SCREEN_TITLE = "MapGame"
 SPRITE_SCALING_PLAYER = 0.1
 
 
-class Button(arcade.TextButton):
+class StartButton(arcade.TextButton):
 
-    def __init__(self, text, x=0, y=0, width=150, height=50, color=arcade.color.ROYAL_AZURE,
+    def __init__(self, view, text, x=0, y=0, width=150, height=50, color=arcade.color.ROYAL_AZURE,
                  font_color=arcade.color.BLACK, secondary_color=arcade.color.BLACK):
         super().__init__(text=text, center_x=x, center_y=y, width=width, height=height,
                          face_color=color, font_color=font_color, highlight_color=secondary_color)
+        self.view = view
 
     def on_press(self):
         self.pressed = True
+        game_view = GameView()
+        self.view.window.show_view(game_view)
 
 
 class MenuView(arcade.View):
@@ -27,25 +30,24 @@ class MenuView(arcade.View):
         self.player_sprite = arcade.Sprite("sprites/character_octa.png", SPRITE_SCALING_PLAYER)
         self.set_buttons()
 
+    def set_buttons(self):
+        start_button = StartButton(self, "Start Game", 640, 330)
+        self.button_list.append(start_button)
+
     def on_show(self):
         arcade.set_background_color(arcade.color.AZURE)
 
     def on_draw(self):
         arcade.start_render()
-        self.player_sprite.draw()
         super().on_draw()
+        self.player_sprite.draw()
 
         arcade.draw_text("Game Menu", SCREEN_WIDTH/2, SCREEN_HEIGHT/2,
                          arcade.color.BLACK, 50, anchor_x="center")
 
-    def set_buttons(self):
-        start_button = Button("Start Game", 640, 330)
-        self.button_list.append(start_button)
-
     def on_mouse_motion(self, x, y, dx, dy):
         self.player_sprite.center_x = x
         self.player_sprite.center_y = y
-
 
 
 class GameView(arcade.View):
@@ -56,17 +58,11 @@ class GameView(arcade.View):
         file_path = os.path.dirname(os.path.abspath(__file__))
         os.chdir(file_path)
 
-        self.player_list = None
-        self.hit_list = None
-
-        self.score = 0
-        self.player_sprite = None
-
-    def setup(self):
         self.player_list = arcade.SpriteList()
         self.hit_list = arcade.SpriteList()
 
         self.score = 0
+        self.player_sprite = None
 
         self.player_sprite = arcade.Sprite("sprites/character_octa.png", SPRITE_SCALING_PLAYER)
         self.player_sprite.center_x = 640
