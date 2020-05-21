@@ -12,9 +12,9 @@ SPRITE_SCALING_PLAYER = 0.1
 class StartButton(arcade.TextButton):
 
     def __init__(self, view, text, x=0, y=0, width=150, height=50, color=arcade.color.ROYAL_AZURE,
-                 font_color=arcade.color.BLACK, secondary_color=arcade.color.BLACK):
-        super().__init__(text=text, center_x=x, center_y=y, width=width, height=height,
-                         face_color=color, font_color=font_color, highlight_color=secondary_color)
+                 font_color=arcade.color.BLACK, secondary_color=arcade.color.BLACK, theme=None):
+        super().__init__(text=text, center_x=x, center_y=y, width=width, height=height, face_color=color,
+                         font_color=font_color, highlight_color=secondary_color, theme=theme)
         self.view = view
 
     def on_press(self):
@@ -28,10 +28,24 @@ class MenuView(arcade.View):
     def __init__(self):
         super().__init__()
         self.player_sprite = arcade.Sprite("sprites/character_octa.png", SPRITE_SCALING_PLAYER)
+        self.theme = None
+
+    def set_button_textures(self):
+        default = ""
+        hover = ""
+        clicked = ""
+        self.theme.add_button_textures(default, hover, clicked)
+
+    def setup_theme(self):
+        self.theme = arcade.Theme()
+        self.set_button_textures()
+
+    def setup(self):
+        self.setup_theme()
         self.set_buttons()
 
     def set_buttons(self):
-        start_button = StartButton(self, "Start Game", 640, 330)
+        start_button = StartButton(self, "Start Game", 640, 330, theme=self.theme)
         self.button_list.append(start_button)
 
     def on_show(self):
@@ -99,7 +113,7 @@ class PauseView(arcade.View):
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         game_view = GameView()
-        game_view.setup()
+        # game_view.setup()
         self.window.show_view(game_view)
 
 
@@ -107,6 +121,7 @@ def main():
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, "MapGame")
     window.set_mouse_visible(False)
     menu_view = MenuView()
+    menu_view.setup()
     window.show_view(menu_view)
     arcade.run()
 
