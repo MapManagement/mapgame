@@ -11,16 +11,53 @@ SPRITE_SCALING_PLAYER = 0.1
 
 class StartButton(arcade.TextButton):
 
-    def __init__(self, view, text, x=0, y=0, width=150, height=50, color=arcade.color.ROYAL_AZURE,
+    def __init__(self, view, text, x=0, y=0, width=250, height=75, color=arcade.color.ROYAL_AZURE,
                  font_color=arcade.color.BLACK, secondary_color=arcade.color.BLACK, theme=None):
         super().__init__(text=text, center_x=x, center_y=y, width=width, height=height, face_color=color,
                          font_color=font_color, highlight_color=secondary_color, theme=theme)
         self.view = view
+        self.font_color = font_color
 
     def on_press(self):
         self.pressed = True
         game_view = GameView()
         self.view.window.show_view(game_view)
+
+
+class OptionButton(arcade.TextButton):
+    def __init__(self, view, text, x=0, y=0, width=250, height=75, color=arcade.color.ROYAL_AZURE,
+                 font_color=arcade.color.BLACK, secondary_color=arcade.color.BLACK, theme=None):
+        super().__init__(text=text, center_x=x, center_y=y, width=width, height=height, face_color=color,
+                         font_color=font_color, highlight_color=secondary_color, theme=theme)
+        self.view = view
+        self.font_color = font_color
+
+    def on_press(self):
+        pass
+
+
+class CustomizeButton(arcade.TextButton):
+    def __init__(self, view, text, x=0, y=0, width=250, height=75, color=arcade.color.ROYAL_AZURE,
+                 font_color=arcade.color.BLACK, secondary_color=arcade.color.BLACK, theme=None):
+        super().__init__(text=text, center_x=x, center_y=y, width=width, height=height, face_color=color,
+                         font_color=font_color, highlight_color=secondary_color, theme=theme)
+        self.view = view
+        self.font_color = font_color
+
+    def on_press(self):
+        pass
+
+
+class ExitButton(arcade.TextButton):
+    def __init__(self, view, text, x=0, y=0, width=250, height=75, color=arcade.color.ROYAL_AZURE,
+                 font_color=arcade.color.BLACK, secondary_color=arcade.color.BLACK, theme=None):
+        super().__init__(text=text, center_x=x, center_y=y, width=width, height=height, face_color=color,
+                         font_color=font_color, highlight_color=secondary_color, theme=theme)
+        self.view = view
+        self.font_color = font_color
+
+    def on_press(self):
+        self.view.window.close()
 
 
 class MenuView(arcade.View):
@@ -31,9 +68,9 @@ class MenuView(arcade.View):
         self.theme = None
 
     def set_button_textures(self):
-        default = ""
-        hover = ""
-        clicked = ""
+        default = "sprites/button_default.png"
+        hover = "sprites/button_hover.png"
+        clicked = "sprites/button_locked.png"
         self.theme.add_button_textures(default, hover, clicked)
 
     def setup_theme(self):
@@ -45,8 +82,14 @@ class MenuView(arcade.View):
         self.set_buttons()
 
     def set_buttons(self):
-        start_button = StartButton(self, "Start Game", 640, 330, theme=self.theme)
+        start_button = StartButton(self, "Start Game", 640, 430, font_color=arcade.color.WHITE, theme=self.theme)
+        options_button = OptionButton(self, "Options", 640, 340, font_color=arcade.color.WHITE, theme=self.theme)
+        customize_button = CustomizeButton(self, "Customize", 640, 250, font_color=arcade.color.WHITE, theme=self.theme)
+        exit_button = ExitButton(self, "Exit Game", 640, 160, font_color=arcade.color.WHITE, theme=self.theme)
         self.button_list.append(start_button)
+        self.button_list.append(options_button)
+        self.button_list.append(customize_button)
+        self.button_list.append(exit_button)
 
     def on_show(self):
         arcade.set_background_color(arcade.color.AZURE)
@@ -56,8 +99,8 @@ class MenuView(arcade.View):
         super().on_draw()
         self.player_sprite.draw()
 
-        arcade.draw_text("Game Menu", SCREEN_WIDTH/2, SCREEN_HEIGHT/2,
-                         arcade.color.BLACK, 50, anchor_x="center")
+        arcade.draw_text("Game Menu", SCREEN_WIDTH/2, SCREEN_HEIGHT/1.5,
+                         arcade.color.WHITE, 50, anchor_x="center")
 
     def on_mouse_motion(self, x, y, dx, dy):
         self.player_sprite.center_x = x
