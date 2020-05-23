@@ -9,6 +9,7 @@ SCREEN_TITLE = "MapGame"
 SPRITE_SCALING_PLAYER = 0.1
 
 
+# buttons that will be used to open views
 class StartButton(arcade.TextButton):
 
     def __init__(self, view, text, x=0, y=0, width=250, height=75, color=arcade.color.ROYAL_AZURE,
@@ -33,7 +34,9 @@ class OptionButton(arcade.TextButton):
         self.font_color = font_color
 
     def on_press(self):
-        pass
+        self.pressed = True
+        options_view = OptionsView()
+        self.view.window.show_view(options_view)
 
 
 class CustomizeButton(arcade.TextButton):
@@ -45,7 +48,9 @@ class CustomizeButton(arcade.TextButton):
         self.font_color = font_color
 
     def on_press(self):
-        pass
+        self.pressed = True
+        customize_view = CustomizeView()
+        self.view.window.show_view(customize_view)
 
 
 class ExitButton(arcade.TextButton):
@@ -60,6 +65,7 @@ class ExitButton(arcade.TextButton):
         self.view.window.close()
 
 
+# different views
 class MenuView(arcade.View):
 
     def __init__(self):
@@ -158,6 +164,14 @@ class PauseView(arcade.View):
         game_view = GameView()
         # game_view.setup()
         self.window.show_view(game_view)
+
+
+class OptionsView(arcade.View):
+    pass
+
+
+class CustomizeView(arcade.View):
+    pass
 
 
 def main():
