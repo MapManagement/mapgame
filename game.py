@@ -19,6 +19,7 @@ class MenuButton(arcade.TextButton):
         self.open_view = open_view
 
     def on_press(self):
+        self.open_view.setup()
         self.view.window.show_view(self.open_view)
 
 
@@ -32,6 +33,16 @@ class ExitButton(arcade.TextButton):
 
     def on_press(self):
         self.view.window.close()
+
+
+# some text inputs
+class TextInput(arcade.TextBox):
+    def __init__(self, view, x=0, y=0, width=250, height=75):
+        super().__init__(x=x, y=y, width=width, height=height)
+        self.view = view
+
+    def check_mouse_press(self, x, y):
+        print(x, y)
 
 
 # different views
@@ -141,6 +152,44 @@ class OptionsView(arcade.View):
         self.player_sprite = arcade.Sprite("sprites/character_octa.png", SPRITE_SCALING_PLAYER)
         self.theme = None
 
+    def setup_theme(self):
+        self.theme = arcade.Theme()
+
+    def setup(self):
+        self.setup_theme()
+        self.set_text_boxes()
+
+    def set_text_boxes(self):
+        sens_input = TextInput(self, x=int(SCREEN_WIDTH / 2), y=int(SCREEN_HEIGHT / 2))
+        self.textbox_list.append(sens_input)
+
+    def on_show(self):
+        arcade.set_background_color(arcade.color.AZURE)
+
+    def on_draw(self):
+        arcade.start_render()
+        super().on_draw()
+        self.player_sprite.draw()
+
+        arcade.draw_text("Options", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.1,
+                         arcade.color.WHITE, 50, anchor_x="center")
+
+    def on_mouse_motion(self, x, y, dx, dy):
+        self.player_sprite.center_x = x
+        self.player_sprite.center_y = y
+
+    def on_key_press(self, symbol: int, _modifiers):
+        if symbol == arcade.key.ESCAPE:
+            menu_view = MenuView()
+            self.window.show_view(menu_view)
+
+
+class CustomizeView(arcade.View):
+    def __init__(self):
+        super().__init__()
+        self.player_sprite = arcade.Sprite("sprites/character_octa.png", SPRITE_SCALING_PLAYER)
+        self.theme = None
+
     def set_button_textures(self):
         default = "sprites/button_default.png"
         hover = "sprites/button_hover.png"
@@ -156,14 +205,7 @@ class OptionsView(arcade.View):
         self.set_buttons()
 
     def set_buttons(self):
-        start_button = StartButton(self, "Start Game", 640, 430, font_color=arcade.color.WHITE, theme=self.theme)
-        options_button = OptionButton(self, "Options", 640, 340, font_color=arcade.color.WHITE, theme=self.theme)
-        customize_button = CustomizeButton(self, "Customize", 640, 250, font_color=arcade.color.WHITE, theme=self.theme)
-        exit_button = ExitButton(self, "Exit Game", 640, 160, font_color=arcade.color.WHITE, theme=self.theme)
-        self.button_list.append(start_button)
-        self.button_list.append(options_button)
-        self.button_list.append(customize_button)
-        self.button_list.append(exit_button)
+        pass
 
     def on_show(self):
         arcade.set_background_color(arcade.color.AZURE)
@@ -173,7 +215,7 @@ class OptionsView(arcade.View):
         super().on_draw()
         self.player_sprite.draw()
 
-        arcade.draw_text("Game Menu", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.5,
+        arcade.draw_text("Customizations", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.1,
                          arcade.color.WHITE, 50, anchor_x="center")
 
     def on_mouse_motion(self, x, y, dx, dy):
@@ -184,10 +226,6 @@ class OptionsView(arcade.View):
         if symbol == arcade.key.ESCAPE:
             menu_view = MenuView()
             self.window.show_view(menu_view)
-
-
-class CustomizeView(arcade.View):
-    pass
 
 
 def main():
