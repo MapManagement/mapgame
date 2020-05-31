@@ -36,13 +36,18 @@ class ExitButton(arcade.TextButton):
 
 
 # some text inputs
-class TextInput(arcade.TextBox):
-    def __init__(self, view, x=0, y=0, width=250, height=75):
-        super().__init__(x=x, y=y, width=width, height=height)
-        self.view = view
+class CustomizeButton(arcade.TextButton):
+    def __init__(self, text, x, y, font_color=arcade.color.WHITE, theme=None):
+        super().__init__(text=text, center_x=x, center_y=y, width=200, height=50, theme=theme)
+        self.font_color = font_color
 
     def check_mouse_press(self, x, y):
         print(x, y)
+
+
+class TextLabel(arcade.TextLabel):
+    def __init__(self, text, x=0, y=0, font_size=15, font_name="Calibri", color=arcade.color.WHITE):
+        super().__init__(text=text, x=x, y=y, font_size=font_size, font_name=font_name, color=color)
 
 
 # different views
@@ -69,11 +74,9 @@ class MenuView(arcade.View):
 
     def set_buttons(self):
         start_button = MenuButton(self, "Start Game", 640, 430, GameView(), arcade.color.WHITE, self.theme)
-        options_button = MenuButton(self, "Options", 640, 340, OptionsView(), arcade.color.WHITE, self.theme)
-        customize_button = MenuButton(self, "Customize", 640, 250, CustomizeView(), arcade.color.WHITE, self.theme)
-        exit_button = ExitButton(self, "Exit Game", 640, 160, font_color=arcade.color.WHITE, theme=self.theme)
+        customize_button = MenuButton(self, "Customize", 640, 340, CustomizeView(), arcade.color.WHITE, self.theme)
+        exit_button = ExitButton(self, "Exit Game", 640, 250, font_color=arcade.color.WHITE, theme=self.theme)
         self.button_list.append(start_button)
-        self.button_list.append(options_button)
         self.button_list.append(customize_button)
         self.button_list.append(exit_button)
 
@@ -146,44 +149,6 @@ class PauseView(arcade.View):
         self.window.show_view(game_view)
 
 
-class OptionsView(arcade.View):
-    def __init__(self):
-        super().__init__()
-        self.player_sprite = arcade.Sprite("sprites/character_octa.png", SPRITE_SCALING_PLAYER)
-        self.theme = None
-
-    def setup_theme(self):
-        self.theme = arcade.Theme()
-
-    def setup(self):
-        self.setup_theme()
-        self.set_text_boxes()
-
-    def set_text_boxes(self):
-        sens_input = TextInput(self, x=int(SCREEN_WIDTH / 2), y=int(SCREEN_HEIGHT / 2))
-        self.textbox_list.append(sens_input)
-
-    def on_show(self):
-        arcade.set_background_color(arcade.color.AZURE)
-
-    def on_draw(self):
-        arcade.start_render()
-        super().on_draw()
-        self.player_sprite.draw()
-
-        arcade.draw_text("Options", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.1,
-                         arcade.color.WHITE, 50, anchor_x="center")
-
-    def on_mouse_motion(self, x, y, dx, dy):
-        self.player_sprite.center_x = x
-        self.player_sprite.center_y = y
-
-    def on_key_press(self, symbol: int, _modifiers):
-        if symbol == arcade.key.ESCAPE:
-            menu_view = MenuView()
-            self.window.show_view(menu_view)
-
-
 class CustomizeView(arcade.View):
     def __init__(self):
         super().__init__()
@@ -202,10 +167,39 @@ class CustomizeView(arcade.View):
 
     def setup(self):
         self.setup_theme()
-        self.set_buttons()
+        self.set_targets()
+        self.set_crosshairs()
+        self.set_backgrounds()
 
-    def set_buttons(self):
-        pass
+    def set_targets(self):
+        target_text = TextLabel(text="Targets", x=175, y=625, font_size=25)
+        self.text_list.append(target_text)
+
+        target_moehre = CustomizeButton(text="Moehre", x=175, y=575, theme=self.theme)
+        self.button_list.append(target_moehre)
+
+        target_default = CustomizeButton(text="Default", x=175, y=500, theme=self.theme)
+        self.button_list.append(target_default)
+
+    def set_crosshairs(self):
+        crosshair_text = TextLabel(text="Crosshairs", x=425, y=625, font_size=25)
+        self.text_list.append(crosshair_text)
+
+        crossh_cross = CustomizeButton(text="Cross", x=425, y=575, theme=self.theme)
+        self.button_list.append(crossh_cross)
+
+        crossh_dot = CustomizeButton(text="Dot", x=425, y=500, theme=self.theme)
+        self.button_list.append(crossh_dot)
+
+        crossh_circle = CustomizeButton(text="Circle", x=425, y=425, theme=self.theme)
+        self.button_list.append(crossh_circle)
+
+        crossh_cross_circle = CustomizeButton(text="Cross & Circle", x=425, y=350, theme=self.theme)
+        self.button_list.append(crossh_cross_circle)
+
+    def set_backgrounds(self):
+        background_text = TextLabel(text="Backgrounds", x=675, y=625, font_size=25)
+        self.text_list.append(background_text)
 
     def on_show(self):
         arcade.set_background_color(arcade.color.AZURE)
