@@ -41,9 +41,6 @@ class CustomizeButton(arcade.TextButton):
         super().__init__(text=text, center_x=x, center_y=y, width=200, height=50, theme=theme)
         self.font_color = font_color
 
-    def check_mouse_press(self, x, y):
-        print(x, y)
-
 
 class TextLabel(arcade.TextLabel):
     def __init__(self, text, x=0, y=0, font_size=15, font_name="Calibri", color=arcade.color.WHITE):
@@ -170,6 +167,7 @@ class CustomizeView(arcade.View):
         self.set_targets()
         self.set_crosshairs()
         self.set_backgrounds()
+        self.set_speed()
 
     def set_targets(self):
         target_text = TextLabel(text="Targets", x=175, y=625, font_size=25)
@@ -200,6 +198,37 @@ class CustomizeView(arcade.View):
     def set_backgrounds(self):
         background_text = TextLabel(text="Backgrounds", x=675, y=625, font_size=25)
         self.text_list.append(background_text)
+
+        background_clean = CustomizeButton(text="Clean", x=675, y=575, theme=self.theme)
+        self.button_list.append(background_clean)
+
+        background_forest = CustomizeButton(text="Forest", x=675, y=500, theme=self.theme)
+        self.button_list.append(background_forest)
+
+        background_mountains = CustomizeButton(text="Mountains", x=675, y=425, theme=self.theme)
+        self.button_list.append(background_mountains)
+
+        background_sea = CustomizeButton(text="Sea", x=675, y=350, theme=self.theme)
+        self.button_list.append(background_sea)
+
+    def set_speed(self):
+        background_text = TextLabel(text="Speed", x=925, y=625, font_size=25)
+        self.text_list.append(background_text)
+
+        speed_beginner = CustomizeButton(text="Beginner", x=925, y=575, theme=self.theme)
+        self.button_list.append(speed_beginner)
+
+        speed_slow = CustomizeButton(text="Slow", x=925, y=500, theme=self.theme)
+        self.button_list.append(speed_slow)
+
+        speed_medium = CustomizeButton(text="Medium", x=925, y=425, theme=self.theme)
+        self.button_list.append(speed_medium)
+
+        speed_fast = CustomizeButton(text="Fast", x=925, y=350, theme=self.theme)
+        self.button_list.append(speed_fast)
+
+        speed_ultra = CustomizeButton(text="Ultra", x=925, y=275, theme=self.theme)
+        self.button_list.append(speed_ultra)
 
     def on_show(self):
         arcade.set_background_color(arcade.color.AZURE)
