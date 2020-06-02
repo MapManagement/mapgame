@@ -6,7 +6,7 @@ SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 SCREEN_TITLE = "MapGame"
 
-SPRITE_SCALING_PLAYER = 0.1
+SPRITE_SCALING_PLAYER = 0.3
 
 
 # buttons that will be used to open views
@@ -52,7 +52,7 @@ class MenuView(arcade.View):
 
     def __init__(self):
         super().__init__()
-        self.player_sprite = arcade.Sprite("sprites/character_octa.png", SPRITE_SCALING_PLAYER)
+        self.player_sprite = arcade.Sprite("sprites/crossh_cross_circle.png", SPRITE_SCALING_PLAYER)
         self.theme = None
 
     def set_button_textures(self):
@@ -107,7 +107,7 @@ class GameView(arcade.View):
         self.score = 0
         self.player_sprite = None
 
-        self.player_sprite = arcade.Sprite("sprites/character_octa.png", SPRITE_SCALING_PLAYER)
+        self.player_sprite = arcade.Sprite("sprites/crossh_cross_circle.png", SPRITE_SCALING_PLAYER)
         self.player_sprite.center_x = 640
         self.player_sprite.center_y = 360
         self.player_list.append(self.player_sprite)
@@ -142,14 +142,13 @@ class PauseView(arcade.View):
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         game_view = GameView()
-        # game_view.setup()
         self.window.show_view(game_view)
 
 
 class CustomizeView(arcade.View):
     def __init__(self):
         super().__init__()
-        self.player_sprite = arcade.Sprite("sprites/character_octa.png", SPRITE_SCALING_PLAYER)
+        self.player_sprite = arcade.Sprite("sprites/crossh_cross_circle.png", SPRITE_SCALING_PLAYER)
         self.theme = None
 
     def set_button_textures(self):
