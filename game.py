@@ -37,9 +37,32 @@ class ExitButton(arcade.TextButton):
 
 # some text inputs
 class CustomizeButton(arcade.TextButton):
-    def __init__(self, text, x, y, font_color=arcade.color.WHITE, theme=None):
+    def __init__(self, view, text, x, y, file, font_color=arcade.color.WHITE, theme=None):
         super().__init__(text=text, center_x=x, center_y=y, width=200, height=50, theme=theme)
         self.font_color = font_color
+        self.file = file
+        self.view = view
+
+    def on_press(self):
+        item_types = {"targets":
+                          ["moehre", "target"],
+                      "crosshairs":
+                          ["crossh_circle", "crossh_cross", "crossh_cross_circle", "crossh_dot"],
+                      "backgrounds":
+                          [],
+                      "speed":
+                          []
+                      }
+        if "target" in self.file:
+            pass
+        elif "crossh" in self.file:
+            self.view.player_sprite = arcade.Sprite(f"sprites/{self.file}", SPRITE_SCALING_PLAYER)
+        elif "backg" == self.file:
+            pass
+        elif "speed" in self.file:
+            pass
+        else:
+            pass
 
 
 class TextLabel(arcade.TextLabel):
@@ -163,12 +186,37 @@ class CustomizeView(arcade.View):
 
     def setup(self):
         self.setup_theme()
-        self.set_targets()
+        #self.set_targets()
         self.set_crosshairs()
-        self.set_backgrounds()
-        self.set_speed()
+        #self.set_backgrounds()
+        #self.set_speed()
 
-    def set_targets(self):
+    def change_item(self, item_type, item):
+        item_types = {"targets":
+                          ["moehre", "target"],
+                      "crosshairs":
+                          ["crossh_circle", "crossh_cross", "crossh_cross_circle", "crossh_dot"],
+                      "backgrounds":
+                          [],
+                      "speed":
+                          []
+                      }
+        if item in item_types[item_type]:
+            if item_type == "target":
+                pass
+            elif item_type == "crosshair":
+                print("Hello")
+                self.player_sprite = arcade.Sprite(f"sprites/{item}.png", SPRITE_SCALING_PLAYER)
+            elif item_type == "background":
+                pass
+            elif item_type == "speed":
+                pass
+            else:
+                pass
+        else:
+            print(f"Error: Couldn't find any item called {item}!")
+
+    """def set_targets(self):
         target_text = TextLabel(text="Targets", x=175, y=625, font_size=25)
         self.text_list.append(target_text)
 
@@ -176,25 +224,25 @@ class CustomizeView(arcade.View):
         self.button_list.append(target_moehre)
 
         target_default = CustomizeButton(text="Default", x=175, y=500, theme=self.theme)
-        self.button_list.append(target_default)
+        self.button_list.append(target_default)"""
 
     def set_crosshairs(self):
         crosshair_text = TextLabel(text="Crosshairs", x=425, y=625, font_size=25)
         self.text_list.append(crosshair_text)
 
-        crossh_cross = CustomizeButton(text="Cross", x=425, y=575, theme=self.theme)
+        crossh_cross = CustomizeButton(view=self, file="crossh_cross.png", text="Cross", x=425, y=575, theme=self.theme)
         self.button_list.append(crossh_cross)
 
-        crossh_dot = CustomizeButton(text="Dot", x=425, y=500, theme=self.theme)
+        crossh_dot = CustomizeButton(view=self, file="crossh_dot.png", text="Dot", x=425, y=500, theme=self.theme)
         self.button_list.append(crossh_dot)
 
-        crossh_circle = CustomizeButton(text="Circle", x=425, y=425, theme=self.theme)
+        crossh_circle = CustomizeButton(view=self, file="crossh_circle.png", text="Circle", x=425, y=425, theme=self.theme)
         self.button_list.append(crossh_circle)
 
-        crossh_cross_circle = CustomizeButton(text="Cross & Circle", x=425, y=350, theme=self.theme)
+        crossh_cross_circle = CustomizeButton(view=self, file="crossh_cross_circle.png", text="Cross & Circle", x=425, y=350, theme=self.theme)
         self.button_list.append(crossh_cross_circle)
 
-    def set_backgrounds(self):
+    """def set_backgrounds(self):
         background_text = TextLabel(text="Backgrounds", x=675, y=625, font_size=25)
         self.text_list.append(background_text)
 
@@ -227,7 +275,7 @@ class CustomizeView(arcade.View):
         self.button_list.append(speed_fast)
 
         speed_ultra = CustomizeButton(text="Ultra", x=925, y=275, theme=self.theme)
-        self.button_list.append(speed_ultra)
+        self.button_list.append(speed_ultra)"""
 
     def on_show(self):
         arcade.set_background_color(arcade.color.AZURE)
