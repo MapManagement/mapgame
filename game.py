@@ -6,7 +6,7 @@ SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 SCREEN_TITLE = "MapGame"
 
-SPRITE_SCALING_PLAYER = 0.3
+SPRITE_SCALING_PLAYER = 0.2
 
 
 # buttons that will be used to open views
@@ -47,7 +47,8 @@ class CustomizeButton(arcade.TextButton):
         item_types = {"targets":
                           ["moehre", "target"],
                       "crosshairs":
-                          ["crossh_circle", "crossh_cross", "crossh_cross_circle", "crossh_dot"],
+                          {"crossh_circle.png": .3, "crossh_cross.png": .1, "crossh_cross_circle.png": .2,
+                           "crossh_dot.png": .025},
                       "backgrounds":
                           [],
                       "speed":
@@ -56,7 +57,7 @@ class CustomizeButton(arcade.TextButton):
         if "target" in self.file:
             pass
         elif "crossh" in self.file:
-            self.view.player_sprite = arcade.Sprite(f"sprites/{self.file}", SPRITE_SCALING_PLAYER)
+            self.view.player_sprite = arcade.Sprite(f"sprites/{self.file}", item_types["crosshairs"][self.file])
         elif "backg" == self.file:
             pass
         elif "speed" in self.file:
@@ -108,7 +109,7 @@ class MenuView(arcade.View):
         super().on_draw()
         self.player_sprite.draw()
 
-        arcade.draw_text("Game Menu", SCREEN_WIDTH/2, SCREEN_HEIGHT/1.5,
+        arcade.draw_text("Game Menu", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.5,
                          arcade.color.WHITE, 50, anchor_x="center")
 
     def on_mouse_motion(self, x, y, dx, dy):
@@ -160,7 +161,7 @@ class PauseView(arcade.View):
 
     def on_draw(self):
         arcade.start_render()
-        arcade.draw_text("Game paused", SCREEN_WIDTH/2, SCREEN_HEIGHT/2,
+        arcade.draw_text("Game paused", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
                          arcade.color.BLACK, 40, anchor_x="center")
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
@@ -186,10 +187,10 @@ class CustomizeView(arcade.View):
 
     def setup(self):
         self.setup_theme()
-        #self.set_targets()
+        # self.set_targets()
         self.set_crosshairs()
-        #self.set_backgrounds()
-        #self.set_speed()
+        # self.set_backgrounds()
+        # self.set_speed()
 
     def change_item(self, item_type, item):
         item_types = {"targets":
@@ -236,10 +237,12 @@ class CustomizeView(arcade.View):
         crossh_dot = CustomizeButton(view=self, file="crossh_dot.png", text="Dot", x=425, y=500, theme=self.theme)
         self.button_list.append(crossh_dot)
 
-        crossh_circle = CustomizeButton(view=self, file="crossh_circle.png", text="Circle", x=425, y=425, theme=self.theme)
+        crossh_circle = CustomizeButton(view=self, file="crossh_circle.png", text="Circle", x=425, y=425,
+                                        theme=self.theme)
         self.button_list.append(crossh_circle)
 
-        crossh_cross_circle = CustomizeButton(view=self, file="crossh_cross_circle.png", text="Cross & Circle", x=425, y=350, theme=self.theme)
+        crossh_cross_circle = CustomizeButton(view=self, file="crossh_cross_circle.png", text="Cross & Circle", x=425,
+                                              y=350, theme=self.theme)
         self.button_list.append(crossh_cross_circle)
 
     """def set_backgrounds(self):
