@@ -5,6 +5,7 @@ import os
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 SCREEN_TITLE = "MapGame"
+BACKGROUND = arcade.load_texture(f"sprites/backgrounds/backg_clean.png")
 
 SPRITE_SCALING_PLAYER = 0.2
 
@@ -44,13 +45,14 @@ class CustomizeButton(arcade.TextButton):
         self.view = view
 
     def on_press(self):
+        print(self.file)
         item_types = {"targets":
                           ["moehre", "target"],
                       "crosshairs":
                           {"crossh_circle.png": .3, "crossh_cross.png": .1, "crossh_cross_circle.png": .2,
                            "crossh_dot.png": .025},
                       "backgrounds":
-                          [],
+                          ["backg_clean.png", "backg_forest.png", "backg_mountains,png", "backg_sea.png"],
                       "speed":
                           []
                       }
@@ -58,8 +60,10 @@ class CustomizeButton(arcade.TextButton):
             pass
         elif "crossh" in self.file:
             self.view.player_sprite = arcade.Sprite(f"sprites/{self.file}", item_types["crosshairs"][self.file])
-        elif "backg" == self.file:
-            pass
+        elif "backg" in self.file:
+            background = arcade.load_texture(f"sprites/{self.file}")
+            MenuView(background).setup()
+            self.view.window.show_view(MenuView(background))
         elif "speed" in self.file:
             pass
         else:
@@ -74,10 +78,11 @@ class TextLabel(arcade.TextLabel):
 # different views
 class MenuView(arcade.View):
 
-    def __init__(self):
+    def __init__(self, background):
         super().__init__()
         self.player_sprite = arcade.Sprite("sprites/crossh_cross_circle.png", SPRITE_SCALING_PLAYER)
         self.theme = None
+        self.background = background
 
     def set_button_textures(self):
         default = "sprites/button_default.png"
@@ -94,18 +99,18 @@ class MenuView(arcade.View):
         self.set_buttons()
 
     def set_buttons(self):
-        start_button = MenuButton(self, "Start Game", 640, 430, GameView(), arcade.color.WHITE, self.theme)
-        customize_button = MenuButton(self, "Customize", 640, 340, CustomizeView(), arcade.color.WHITE, self.theme)
+        start_button = MenuButton(self, "Start Game", 640, 430, GameView(background=BACKGROUND), arcade.color.WHITE,
+                                  self.theme)
+        customize_button = MenuButton(self, "Customize", 640, 340, CustomizeView(background=BACKGROUND),
+                                      arcade.color.WHITE, self.theme)
         exit_button = ExitButton(self, "Exit Game", 640, 250, font_color=arcade.color.WHITE, theme=self.theme)
         self.button_list.append(start_button)
         self.button_list.append(customize_button)
         self.button_list.append(exit_button)
 
-    def on_show(self):
-        arcade.set_background_color(arcade.color.AZURE)
-
     def on_draw(self):
         arcade.start_render()
+        arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
         super().on_draw()
         self.player_sprite.draw()
 
@@ -119,11 +124,13 @@ class MenuView(arcade.View):
 
 class GameView(arcade.View):
 
-    def __init__(self):
+    def __init__(self, background):
         super().__init__()
 
         file_path = os.path.dirname(os.path.abspath(__file__))
         os.chdir(file_path)
+
+        self.background = background
 
         self.player_list = arcade.SpriteList()
         self.hit_list = arcade.SpriteList()
@@ -135,9 +142,6 @@ class GameView(arcade.View):
         self.player_sprite.center_x = 640
         self.player_sprite.center_y = 360
         self.player_list.append(self.player_sprite)
-
-    def on_show(self):
-        arcade.set_background_color(arcade.color.AZURE)
 
     def on_draw(self):
         arcade.start_render()
@@ -170,10 +174,11 @@ class PauseView(arcade.View):
 
 
 class CustomizeView(arcade.View):
-    def __init__(self):
+    def __init__(self, background):
         super().__init__()
         self.player_sprite = arcade.Sprite("sprites/crossh_cross_circle.png", SPRITE_SCALING_PLAYER)
         self.theme = None
+        self.background = background
 
     def set_button_textures(self):
         default = "sprites/button_default.png"
@@ -189,33 +194,8 @@ class CustomizeView(arcade.View):
         self.setup_theme()
         # self.set_targets()
         self.set_crosshairs()
-        # self.set_backgrounds()
+        self.set_backgrounds()
         # self.set_speed()
-
-    def change_item(self, item_type, item):
-        item_types = {"targets":
-                          ["moehre", "target"],
-                      "crosshairs":
-                          ["crossh_circle", "crossh_cross", "crossh_cross_circle", "crossh_dot"],
-                      "backgrounds":
-                          [],
-                      "speed":
-                          []
-                      }
-        if item in item_types[item_type]:
-            if item_type == "target":
-                pass
-            elif item_type == "crosshair":
-                print("Hello")
-                self.player_sprite = arcade.Sprite(f"sprites/{item}.png", SPRITE_SCALING_PLAYER)
-            elif item_type == "background":
-                pass
-            elif item_type == "speed":
-                pass
-            else:
-                pass
-        else:
-            print(f"Error: Couldn't find any item called {item}!")
 
     """def set_targets(self):
         target_text = TextLabel(text="Targets", x=175, y=625, font_size=25)
@@ -245,23 +225,27 @@ class CustomizeView(arcade.View):
                                               y=350, theme=self.theme)
         self.button_list.append(crossh_cross_circle)
 
-    """def set_backgrounds(self):
+    def set_backgrounds(self):
         background_text = TextLabel(text="Backgrounds", x=675, y=625, font_size=25)
         self.text_list.append(background_text)
 
-        background_clean = CustomizeButton(text="Clean", x=675, y=575, theme=self.theme)
+        background_clean = CustomizeButton(view=self, file="backgrounds/backg_clean.png", text="Clean", x=675, y=575,
+                                           theme=self.theme)
         self.button_list.append(background_clean)
 
-        background_forest = CustomizeButton(text="Forest", x=675, y=500, theme=self.theme)
+        background_forest = CustomizeButton(view=self, file="backgrounds/backg_forest.png", text="Forest", x=675, y=500,
+                                            theme=self.theme)
         self.button_list.append(background_forest)
 
-        background_mountains = CustomizeButton(text="Mountains", x=675, y=425, theme=self.theme)
+        background_mountains = CustomizeButton(view=self, file="backgrounds/backg_mountains.png", text="Mountains",
+                                               x=675, y=425, theme=self.theme)
         self.button_list.append(background_mountains)
 
-        background_sea = CustomizeButton(text="Sea", x=675, y=350, theme=self.theme)
+        background_sea = CustomizeButton(view=self, file="backgrounds/backg_sea.png", text="Sea", x=675, y=350,
+                                         theme=self.theme)
         self.button_list.append(background_sea)
 
-    def set_speed(self):
+    """def set_speed(self):
         background_text = TextLabel(text="Speed", x=925, y=625, font_size=25)
         self.text_list.append(background_text)
 
@@ -280,9 +264,6 @@ class CustomizeView(arcade.View):
         speed_ultra = CustomizeButton(text="Ultra", x=925, y=275, theme=self.theme)
         self.button_list.append(speed_ultra)"""
 
-    def on_show(self):
-        arcade.set_background_color(arcade.color.AZURE)
-
     def on_draw(self):
         arcade.start_render()
         super().on_draw()
@@ -297,14 +278,14 @@ class CustomizeView(arcade.View):
 
     def on_key_press(self, symbol: int, _modifiers):
         if symbol == arcade.key.ESCAPE:
-            menu_view = MenuView()
+            menu_view = MenuView(background=BACKGROUND)
             self.window.show_view(menu_view)
 
 
 def main():
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, "MapGame")
     window.set_mouse_visible(False)
-    menu_view = MenuView()
+    menu_view = MenuView(background=BACKGROUND)
     menu_view.setup()
     window.show_view(menu_view)
     arcade.run()
