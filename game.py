@@ -62,8 +62,9 @@ class CustomizeButton(arcade.TextButton):
             self.view.player_sprite = arcade.Sprite(f"sprites/{self.file}", item_types["crosshairs"][self.file])
         elif "backg" in self.file:
             background = arcade.load_texture(f"sprites/{self.file}")
-            MenuView(background).setup()
-            self.view.window.show_view(MenuView(background))
+            menu_view = MenuView(background)
+            menu_view.setup()
+            self.view.window.show_view(menu_view)
         elif "speed" in self.file:
             pass
         else:
@@ -145,6 +146,7 @@ class GameView(arcade.View):
 
     def on_draw(self):
         arcade.start_render()
+        arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
         self.hit_list.draw()
         self.player_list.draw()
 
@@ -266,6 +268,7 @@ class CustomizeView(arcade.View):
 
     def on_draw(self):
         arcade.start_render()
+        arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
         super().on_draw()
         self.player_sprite.draw()
 
