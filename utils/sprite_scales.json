@@ -1,0 +1,25 @@
+{
+  "sprites" :
+  {
+    "player_sprites":
+    {
+      "crossh_circle.png": 0.3,
+      "crossh_cross.png": 0.1,
+      "crossh_cross_circle.png": 0.2,
+      "crossh_dot.png": 0.025
+    },
+    "targets":
+    {
+      "target_default": 0.5,
+      "target_moehre": 0.5
+    },
+    "backgrounds":
+    {
+
+    },
+    "speeds":
+    {
+
+    }
+  }
+}

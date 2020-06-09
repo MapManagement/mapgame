@@ -1,5 +1,6 @@
 import arcade
 import os
+import json
 
 # declaring constants and default values
 SCREEN_WIDTH = 1280
@@ -8,6 +9,13 @@ SCREEN_TITLE = "MapGame"
 BACKGROUND = arcade.load_texture(f"sprites/backgrounds/backg_clean.png")
 
 SPRITE_SCALING_PLAYER = 0.2
+PLAYER_SPRITE = ""
+
+
+def load_sprite_scales():
+    with open("utils/sprite_scales.json", "r") as scales_json:
+        data = json.load(scales_json)
+        return data
 
 
 # classes that will be used within the views
@@ -44,21 +52,12 @@ class CustomizeButton(arcade.TextButton):
         self.view = view
 
     def on_press(self):
-        print(self.file)
-        item_types = {"targets":
-                          ["moehre", "target"],
-                      "crosshairs":
-                          {"crossh_circle.png": .3, "crossh_cross.png": .1, "crossh_cross_circle.png": .2,
-                           "crossh_dot.png": .025},
-                      "backgrounds":
-                          ["backg_clean.png", "backg_forest.png", "backg_mountains,png", "backg_sea.png"],
-                      "speed":
-                          []
-                      }
+        sprites_scales = load_sprite_scales()
         if "target" in self.file:
             pass
         elif "crossh" in self.file:
-            self.view.player_sprite = arcade.Sprite(f"sprites/{self.file}", item_types["crosshairs"][self.file])
+            self.view.player_sprite = arcade.Sprite(f"sprites/player_sprites/{self.file}",
+                                                    sprites_scales["sprites"]["player_sprites"][self.file])
         elif "backg" in self.file:
             background = arcade.load_texture(f"sprites/{self.file}")
 
@@ -81,7 +80,7 @@ class MenuView(arcade.View):
 
     def __init__(self, background):
         super().__init__()
-        self.player_sprite = arcade.Sprite("sprites/crossh_cross_circle.png", SPRITE_SCALING_PLAYER)
+        self.player_sprite = arcade.Sprite("sprites/player_sprites/crossh_cross_circle.png", SPRITE_SCALING_PLAYER)
         self.theme = None
         self.background = background
 
@@ -141,7 +140,7 @@ class GameView(arcade.View):
         self.score = 0
         self.player_sprite = None
 
-        self.player_sprite = arcade.Sprite("sprites/crossh_cross_circle.png", SPRITE_SCALING_PLAYER)
+        self.player_sprite = arcade.Sprite("sprites/player_sprites/crossh_cross_circle.png", SPRITE_SCALING_PLAYER)
         self.player_sprite.center_x = 640
         self.player_sprite.center_y = 360
         self.player_list.append(self.player_sprite)
@@ -178,7 +177,7 @@ class PauseView(arcade.View):
 class CustomizeView(arcade.View):
     def __init__(self, background):
         super().__init__()
-        self.player_sprite = arcade.Sprite("sprites/crossh_cross_circle.png", SPRITE_SCALING_PLAYER)
+        self.player_sprite = arcade.Sprite("sprites/player_sprites/crossh_cross_circle.png", SPRITE_SCALING_PLAYER)
         self.theme = None
         self.background = background
 
