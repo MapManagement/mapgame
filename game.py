@@ -105,6 +105,7 @@ class MenuView(arcade.View):
                                       CustomizeView(background=self.background, player_sprite=self.player_sprite),
                                       arcade.color.WHITE, self.theme)
         exit_button = ExitButton(self, "Exit Game", 640, 250, font_color=arcade.color.WHITE, theme=self.theme)
+
         self.button_list.append(start_button)
         self.button_list.append(customize_button)
         self.button_list.append(exit_button)
@@ -133,6 +134,7 @@ class GameView(arcade.View):
         os.chdir(file_path)
 
         self.background = background
+        self.theme = None
 
         self.player_list = arcade.SpriteList()
         self.hit_list = arcade.SpriteList()
@@ -143,10 +145,24 @@ class GameView(arcade.View):
         self.player_sprite.center_y = 360
         self.player_list.append(self.player_sprite)
 
+    def set_button_textures(self):
+        default = "sprites/button_default.png"
+        hover = "sprites/button_hover.png"
+        clicked = "sprites/button_locked.png"
+        self.theme.add_button_textures(default, hover, clicked)
+
+    def setup_theme(self):
+        self.theme = arcade.Theme()
+        self.set_button_textures()
+
+    def setup(self):
+        self.setup_theme()
+
     def on_draw(self):
         arcade.start_render()
         arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
         self.hit_list.draw()
+        super().on_draw()
         self.player_list.draw()
 
         score_text = f"Hits: {self.score}"
