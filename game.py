@@ -1,6 +1,7 @@
 import arcade
 import os
 import json
+import random
 
 # declaring constants and default values
 SCREEN_WIDTH = 1280
@@ -137,7 +138,7 @@ class GameView(arcade.View):
         self.theme = None
 
         self.player_list = arcade.SpriteList()
-        self.hit_list = arcade.SpriteList()
+        self.target_list = arcade.SpriteList()
 
         self.score = 0
         self.player_sprite = player_sprite
@@ -158,10 +159,18 @@ class GameView(arcade.View):
     def setup(self):
         self.setup_theme()
 
+        self.target_list = arcade.SpriteList()
+
+        for i in range(25):
+            target = arcade.Sprite("sprites/moehre.png", 0.15)
+            target.center_x = random.randrange(SCREEN_WIDTH)
+            target.center_y = random.randrange(SCREEN_HEIGHT)
+            self.target_list.append(target)
+
     def on_draw(self):
         arcade.start_render()
         arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
-        self.hit_list.draw()
+        self.target_list.draw()
         super().on_draw()
         self.player_list.draw()
 
@@ -176,6 +185,14 @@ class GameView(arcade.View):
     def on_mouse_motion(self, x, y, dx, dy):
         self.player_sprite.center_x = x
         self.player_sprite.center_y = y
+
+    def update(self, delta_time: float):
+        self.target_list.update()
+        target_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.target_list)
+
+        for target in target_hit_list:
+            target.remove_from_sprite_lists()
+            self.score += 1
 
 
 # pause menu that will be available by pressing "escape"
