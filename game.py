@@ -186,13 +186,15 @@ class GameView(arcade.View):
         self.player_sprite.center_x = x
         self.player_sprite.center_y = y
 
-    def update(self, delta_time: float):
-        self.target_list.update()
-        target_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.target_list)
+    def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
+        targets = arcade.get_sprites_at_point([x, y], self.target_list)
 
-        for target in target_hit_list:
+        for target in targets:
             target.remove_from_sprite_lists()
             self.score += 1
+
+    def update(self, delta_time: float):
+        self.target_list.update()
 
 
 # pause menu that will be available by pressing "escape"
