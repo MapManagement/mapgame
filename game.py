@@ -160,12 +160,10 @@ class GameView(arcade.View):
         self.setup_theme()
 
         self.target_list = arcade.SpriteList()
-
-        for i in range(25):
-            target = arcade.Sprite("sprites/moehre.png", 0.15)
-            target.center_x = random.randrange(SCREEN_WIDTH)
-            target.center_y = random.randrange(SCREEN_HEIGHT)
-            self.target_list.append(target)
+        target = arcade.Sprite("sprites/moehre.png", 0.15)
+        target.center_x = random.randrange(SCREEN_WIDTH)
+        target.center_y = random.randrange(SCREEN_HEIGHT)
+        self.target_list.append(target)
 
     def on_draw(self):
         arcade.start_render()
@@ -191,6 +189,10 @@ class GameView(arcade.View):
 
         for target in targets:
             target.remove_from_sprite_lists()
+            new_target = arcade.Sprite("sprites/moehre.png", 0.15)
+            new_target.center_x = random.randrange(SCREEN_WIDTH)
+            new_target.center_y = random.randrange(SCREEN_HEIGHT)
+            self.target_list.append(new_target)
             self.score += 1
 
     def update(self, delta_time: float):
