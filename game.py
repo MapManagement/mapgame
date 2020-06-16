@@ -11,7 +11,7 @@ DEFAULT_BACKGROUND = arcade.load_texture(f"sprites/backgrounds/backg_clean.png")
 
 DEFAULT_PLAYER_SPRITE = arcade.Sprite("sprites/player_sprites/crossh_cross.png", 0.1)
 
-DEFAULT_TARGET = arcade.Sprite("sprites/targets/target_default.png")
+DEFAULT_TARGET = arcade.Sprite("sprites/targets/target_default.png", 0.1)
 
 
 def load_sprite_scales():
