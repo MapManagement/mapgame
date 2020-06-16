@@ -10,8 +10,8 @@
     },
     "targets":
     {
-      "target_default": 0.5,
-      "target_moehre": 0.5
+      "target_default.png": 0.1,
+      "target_moehre.png": 0.15
     },
     "backgrounds":
     {
