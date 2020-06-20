@@ -231,6 +231,13 @@ class PauseView(arcade.View):
 
     def setup(self):
         self.setup_theme()
+        self.set_buttons()
+
+    def set_buttons(self):
+        leave_button = MenuButton(self, "Back To Menu", 640, 290,
+                                  MenuView(background=self.background, player_sprite=self.player_sprite,
+                                           target=self.target), arcade.color.WHITE, self.theme)
+        self.button_list.append(leave_button)
 
     def on_draw(self):
         arcade.start_render()
@@ -241,6 +248,8 @@ class PauseView(arcade.View):
         score_text = f"Hits: {self.score}"
         arcade.draw_text(score_text, 20, 680, arcade.color.BLACK, 25)
         arcade.draw_text("Game Paused", SCREEN_WIDTH / 3, SCREEN_HEIGHT / 2, arcade.color.BLACK, 60)
+        arcade.draw_text("Press ESCAPE To Return to Game", SCREEN_WIDTH / 2.5, SCREEN_HEIGHT / 2 - 15,
+                         arcade.color.BLACK, 15)
 
     def on_key_press(self, symbol: int, _modifiers):
         if symbol == arcade.key.ESCAPE:
