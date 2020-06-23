@@ -1,6 +1,7 @@
 import arcade
 import json
 import random
+import time
 
 # declaring constants and default values
 SCREEN_WIDTH = 1280
@@ -188,13 +189,19 @@ class GameView(arcade.View):
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
         targets = arcade.get_sprites_at_point([x, y], self.target_list)
-
-        for target in targets:
-            target.remove_from_sprite_lists()
-            self.target.center_x = random.randrange(SCREEN_WIDTH)
-            self.target.center_y = random.randrange(SCREEN_HEIGHT)
-            self.target_list.append(self.target)
-            self.score += 1
+        if targets:
+            for target in targets:
+                target.remove_from_sprite_lists()
+                self.target.center_x = random.randrange(SCREEN_WIDTH)
+                self.target.center_y = random.randrange(SCREEN_HEIGHT)
+                self.target_list.append(self.target)
+                self.score += 1
+        else:
+            for target in self.target_list:
+                target.remove_from_sprite_lists()
+                self.target.center_x = random.randrange(SCREEN_WIDTH)
+                self.target.center_y = random.randrange(SCREEN_HEIGHT)
+                self.target_list.append(self.target)
 
     def update(self, delta_time: float):
         self.target_list.update()
