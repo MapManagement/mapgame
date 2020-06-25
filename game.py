@@ -1,7 +1,9 @@
 import arcade
 import json
 import random
+import arcade_gui
 import time
+
 
 # declaring constants and default values
 SCREEN_WIDTH = 1280
@@ -76,6 +78,70 @@ class CustomizeButton(arcade.TextButton):
 class TextLabel(arcade.TextLabel):
     def __init__(self, text, x=0, y=0, font_size=15, font_name="Calibri", color=arcade.color.WHITE):
         super().__init__(text=text, x=x, y=y, font_size=font_size, font_name=font_name, color=color)
+
+
+# first screen you see when starting the game, you have to set the size of your display
+class ScreenView(arcade_gui.UIView):
+
+    def __init__(self, player_sprite):
+        super().__init__()
+        self.theme = None
+        self.player_sprite = player_sprite
+
+    def set_button_textures(self):
+        default = "sprites/button_default.png"
+        hover = "sprites/button_hover.png"
+        clicked = "sprites/button_locked.png"
+        self.theme.add_button_textures(default, hover, clicked)
+
+    def setup_theme(self):
+        self.theme = arcade.Theme()
+        self.set_button_textures()
+
+    def setup(self):
+        self.setup_theme()
+
+        input_box_width = arcade_gui.UIInputBox(
+            center_x=SCREEN_WIDTH / 2,
+            center_y=SCREEN_HEIGHT / 2,
+            width=250,
+            height=75
+        )
+
+        input_box_height = arcade_gui.UIInputBox(
+            center_x=SCREEN_WIDTH / 2,
+            center_y=SCREEN_HEIGHT / 2 - 150,
+            width=250,
+            height=75
+        )
+
+        submit_button = arcade_gui.UIFlatButton(
+            text="SUBMIT",
+            center_x=int(SCREEN_WIDTH / 2),
+            center_y=int(SCREEN_HEIGHT / 2) - 250,
+            width=150,
+            height=75,
+        )
+
+        self.add_ui_element(input_box_width)
+        self.add_ui_element(input_box_height)
+        self.add_ui_element(submit_button)
+
+    def on_draw(self):
+        super().on_draw()
+        arcade.set_background_color(arcade.color.AZURE)
+        self.player_sprite.draw()
+
+        arcade.draw_text("Set Display Size", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.5,
+                         arcade.color.WHITE, 50, anchor_x="center")
+        arcade.draw_text("Width", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 50,
+                         arcade.color.WHITE, 30, anchor_x="center")
+        arcade.draw_text("Height", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 100,
+                         arcade.color.WHITE, 30, anchor_x="center")
+
+    def on_mouse_motion(self, x, y, dx, dy):
+        self.player_sprite.center_x = x
+        self.player_sprite.center_y = y
 
 
 # start screen including any buttons to go further
@@ -388,9 +454,12 @@ class CustomizeView(arcade.View):
 def main():
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, "MapGame")
     window.set_mouse_visible(False)
-    menu_view = MenuView(background=DEFAULT_BACKGROUND, player_sprite=DEFAULT_PLAYER_SPRITE, target=DEFAULT_TARGET)
+    screen_view = ScreenView(DEFAULT_PLAYER_SPRITE)
+    screen_view.setup()
+    window.show_view(screen_view)
+    """menu_view = MenuView(background=DEFAULT_BACKGROUND, player_sprite=DEFAULT_PLAYER_SPRITE, target=DEFAULT_TARGET)
     menu_view.setup()
-    window.show_view(menu_view)
+    window.show_view(menu_view)"""
     arcade.run()
 
 
