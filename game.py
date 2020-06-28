@@ -87,6 +87,8 @@ class ScreenView(arcade_gui.UIView):
         super().__init__()
         self.theme = None
         self.player_sprite = player_sprite
+        self.width = 1920
+        self.height = 1080
 
     def set_button_textures(self):
         default = "sprites/button_default.png"
@@ -100,36 +102,42 @@ class ScreenView(arcade_gui.UIView):
 
     def setup(self):
         self.setup_theme()
+        self.set_buttons()
 
         input_box_width = arcade_gui.UIInputBox(
             center_x=SCREEN_WIDTH / 2,
             center_y=SCREEN_HEIGHT / 2,
             width=250,
-            height=75
+            height=75,
+            id="width_box"
         )
 
         input_box_height = arcade_gui.UIInputBox(
             center_x=SCREEN_WIDTH / 2,
             center_y=SCREEN_HEIGHT / 2 - 150,
             width=250,
-            height=75
-        )
-
-        submit_button = arcade_gui.UIFlatButton(
-            text="SUBMIT",
-            center_x=int(SCREEN_WIDTH / 2),
-            center_y=int(SCREEN_HEIGHT / 2) - 250,
-            width=150,
             height=75,
+            id="height_box"
         )
 
         self.add_ui_element(input_box_width)
         self.add_ui_element(input_box_height)
+
+    def set_buttons(self):
+        submit_button = arcade_gui.UIFlatButton(
+            text='Submit',
+            center_x=int(SCREEN_WIDTH / 2),
+            center_y=int(SCREEN_HEIGHT / 2) - 250,
+            width=200,
+            height=40,
+            id='submit_button'
+        )
         self.add_ui_element(submit_button)
 
     def on_draw(self):
-        super().on_draw()
+        arcade.start_render()
         arcade.set_background_color(arcade.color.AZURE)
+        super().on_draw()
         self.player_sprite.draw()
 
         arcade.draw_text("Set Display Size", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.5,
@@ -142,6 +150,23 @@ class ScreenView(arcade_gui.UIView):
     def on_mouse_motion(self, x, y, dx, dy):
         self.player_sprite.center_x = x
         self.player_sprite.center_y = y
+
+    def on_event(self, event: arcade_gui.UIEvent):
+        super(ScreenView, self).on_event(event)
+
+        if event.type == arcade_gui.UIFlatButton.CLICKED and event.ui_element.id == "submit_button":
+            self.open_menu()
+
+    def open_menu(self):
+        height_input: arcade_gui.UIInputBox = self.find_by_id("height_box")
+        self.height = height_input.text
+
+        width_input: arcade_gui.UIInputBox = self.find_by_id("width_box")
+        self.width: arcade_gui.UIInputBox = width_input.text
+
+        menu_view = MenuView(background=DEFAULT_BACKGROUND, target=DEFAULT_TARGET, player_sprite=DEFAULT_PLAYER_SPRITE)
+        menu_view.setup()
+        self.window.show_view(menu_view)
 
 
 # start screen including any buttons to go further
