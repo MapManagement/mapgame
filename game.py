@@ -2,7 +2,6 @@ import arcade
 import json
 import random
 import arcade_gui
-import time
 
 
 # declaring constants and default values
@@ -154,7 +153,8 @@ class ScreenView(arcade_gui.UIView):
     def on_event(self, event: arcade_gui.UIEvent):
         super(ScreenView, self).on_event(event)
 
-        if event.type == arcade_gui.UIFlatButton.CLICKED and event.ui_element.id == "submit_button":
+        if event.type == arcade_gui.UIFlatButton.CLICKED and event.ui_element.id == "submit_button"\
+                and self.find_by_id("height_box").text != "" and self.find_by_id("width_box").text != "":
             self.open_menu()
 
     def open_menu(self):
@@ -162,11 +162,16 @@ class ScreenView(arcade_gui.UIView):
         self.height = height_input.text
 
         width_input: arcade_gui.UIInputBox = self.find_by_id("width_box")
-        self.width: arcade_gui.UIInputBox = width_input.text
+        self.width = width_input.text
 
+        self.window.close()
+
+        window = arcade.Window(int(self.width), int(self.height), fullscreen=True, title="MapGame")
+        window.set_mouse_visible(False)
         menu_view = MenuView(background=DEFAULT_BACKGROUND, target=DEFAULT_TARGET, player_sprite=DEFAULT_PLAYER_SPRITE)
         menu_view.setup()
-        self.window.show_view(menu_view)
+        window.show_view(menu_view)
+        arcade.run()
 
 
 # start screen including any buttons to go further
@@ -477,11 +482,11 @@ class CustomizeView(arcade.View):
 
 
 def main():
-    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, "MapGame")
-    window.set_mouse_visible(False)
+    setup_window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, "MapGame - Setup")
+    setup_window.set_mouse_visible(False)
     screen_view = ScreenView(DEFAULT_PLAYER_SPRITE)
     screen_view.setup()
-    window.show_view(screen_view)
+    setup_window.show_view(screen_view)
     """menu_view = MenuView(background=DEFAULT_BACKGROUND, player_sprite=DEFAULT_PLAYER_SPRITE, target=DEFAULT_TARGET)
     menu_view.setup()
     window.show_view(menu_view)"""
