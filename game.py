@@ -109,6 +109,7 @@ class ScreenView(arcade_gui.UIView):
             center_y=self.height / 2,
             width=250,
             height=75,
+            text=str(1920),
             id="width_box"
         )
 
@@ -117,6 +118,7 @@ class ScreenView(arcade_gui.UIView):
             center_y=self.height / 2 - 150,
             width=250,
             height=75,
+            text=str(1080),
             id="height_box"
         )
 
@@ -169,7 +171,7 @@ class ScreenView(arcade_gui.UIView):
 
         window = arcade.Window(int(self.width), int(self.height), fullscreen=True, title="MapGame")
         window.set_mouse_visible(False)
-        menu_view = MenuView(background=DEFAULT_BACKGROUND, target=DEFAULT_TARGET, player_sprite=DEFAULT_PLAYER_SPRITE,
+        menu_view = MenuView(background=DEFAULT_BACKGROUND, target=DEFAULT_TARGET, player_sprite=self.player_sprite,
                              height=int(self.height), width=int(self.width))
         menu_view.setup()
         window.show_view(menu_view)
@@ -203,15 +205,16 @@ class MenuView(arcade.View):
         self.set_buttons()
 
     def set_buttons(self):
-        start_button = MenuButton(self, "Start Game", 640, 430,
+        start_button = MenuButton(self, "Start Game", self.width / 2, self.height / 2,
                                   GameView(background=self.background, player_sprite=self.player_sprite,
                                            target=self.target, score=0, height=self.height, width=self.width),
-                                  arcade.color.WHITE, self.theme)
-        customize_button = MenuButton(self, "Customize", 640, 340,
+                                  font_color=arcade.color.WHITE, theme=self.theme)
+        customize_button = MenuButton(self, "Customize", self.width / 2, self.height / 2 - 100,
                                       CustomizeView(background=self.background, player_sprite=self.player_sprite,
                                                     target=self.target, height=self.height, width=self.width),
-                                      arcade.color.WHITE, self.theme)
-        exit_button = ExitButton(self, "Exit Game", 640, 250, font_color=arcade.color.WHITE, theme=self.theme)
+                                      font_color=arcade.color.WHITE, theme=self.theme)
+        exit_button = ExitButton(self, "Exit Game", self.width / 2, self.height / 2 - 200,
+                                 font_color=arcade.color.WHITE, theme=self.theme)
 
         self.button_list.append(start_button)
         self.button_list.append(customize_button)
@@ -278,7 +281,7 @@ class GameView(arcade.View):
         self.player_list.draw()
 
         score_text = f"Hits: {self.score}"
-        arcade.draw_text(score_text, 20, 680, arcade.color.BLACK, 25)
+        arcade.draw_text(score_text, 20, self.height - 50, arcade.color.BLACK, 25)
 
     def on_key_press(self, symbol: int, _modifiers):
         if symbol == arcade.key.ESCAPE:
@@ -347,7 +350,7 @@ class PauseView(arcade.View):
         self.set_buttons()
 
     def set_buttons(self):
-        leave_button = MenuButton(self, "Back To Menu", 640, 290,
+        leave_button = MenuButton(self, "Back To Menu", self.width / 2, self.height / 2 - 100,
                                   MenuView(background=self.background, player_sprite=self.player_sprite,
                                            target=self.target, height=self.height, width=self.width),
                                   arcade.color.WHITE, self.theme)
@@ -360,9 +363,9 @@ class PauseView(arcade.View):
         self.player_list.draw()
 
         score_text = f"Hits: {self.score}"
-        arcade.draw_text(score_text, 20, 680, arcade.color.BLACK, 25)
-        arcade.draw_text("Game Paused", self.width / 3, self.height / 2, arcade.color.BLACK, 60)
-        arcade.draw_text("Press ESCAPE To Return to Game", self.width / 2.5, self.height / 2 - 15,
+        arcade.draw_text(score_text, 20, self.height - 50, arcade.color.BLACK, 25)
+        arcade.draw_text("Game Paused", self.width / 2.55, self.height / 2, arcade.color.BLACK, 60)
+        arcade.draw_text("Press ESCAPE To Return to Game", self.width / 2.3, self.height / 2 - 25,
                          arcade.color.BLACK, 15)
 
     def on_key_press(self, symbol: int, _modifiers):
@@ -406,53 +409,56 @@ class CustomizeView(arcade.View):
         # self.set_speed()
 
     def set_targets(self):
-        target_text = TextLabel(text="Targets", x=175, y=625, font_size=25)
+        target_text = TextLabel(text="Targets", x=self.width / 2 - 250, y=self.height / 1.5, font_size=25)
         self.text_list.append(target_text)
 
-        target_moehre = CustomizeButton(view=self, file="target_moehre.png", text="Moehre", x=175, y=575,
-                                        theme=self.theme)
+        target_moehre = CustomizeButton(view=self, file="target_moehre.png", text="Moehre", x=self.width / 2 - 250,
+                                        y=self.height / 1.5 - 75, theme=self.theme)
         self.button_list.append(target_moehre)
 
-        target_default = CustomizeButton(view=self, file="target_default.png", text="Default", x=175, y=500,
-                                         theme=self.theme)
+        target_default = CustomizeButton(view=self, file="target_default.png", text="Default", x=self.width / 2 - 250,
+                                         y=self.height / 1.5 - 150, theme=self.theme)
         self.button_list.append(target_default)
 
     def set_crosshairs(self):
-        crosshair_text = TextLabel(text="Crosshairs", x=425, y=625, font_size=25)
+        crosshair_text = TextLabel(text="Crosshairs", x=self.width / 2, y=self.height / 1.5, font_size=25)
         self.text_list.append(crosshair_text)
 
-        crossh_cross = CustomizeButton(view=self, file="crossh_cross.png", text="Cross", x=425, y=575, theme=self.theme)
+        crossh_cross = CustomizeButton(view=self, file="crossh_cross.png", text="Cross", x=self.width / 2,
+                                       y=self.height / 1.5 - 75, theme=self.theme)
         self.button_list.append(crossh_cross)
 
-        crossh_dot = CustomizeButton(view=self, file="crossh_dot.png", text="Dot", x=425, y=500, theme=self.theme)
+        crossh_dot = CustomizeButton(view=self, file="crossh_dot.png", text="Dot", x=self.width / 2,
+                                     y=self.height / 1.5 - 150, theme=self.theme)
         self.button_list.append(crossh_dot)
 
-        crossh_circle = CustomizeButton(view=self, file="crossh_circle.png", text="Circle", x=425, y=425,
+        crossh_circle = CustomizeButton(view=self, file="crossh_circle.png", text="Circle", x=self.width / 2,
+                                        y=self.height / 1.5 - 225,
                                         theme=self.theme)
         self.button_list.append(crossh_circle)
 
-        crossh_cross_circle = CustomizeButton(view=self, file="crossh_cross_circle.png", text="Cross & Circle", x=425,
-                                              y=350, theme=self.theme)
+        crossh_cross_circle = CustomizeButton(view=self, file="crossh_cross_circle.png", text="Cross & Circle",
+                                              x=self.width / 2, y=self.height / 1.5 - 300, theme=self.theme)
         self.button_list.append(crossh_cross_circle)
 
     def set_backgrounds(self):
-        background_text = TextLabel(text="Backgrounds", x=675, y=625, font_size=25)
+        background_text = TextLabel(text="Backgrounds", x=self.width / 2 + 250, y=self.height / 1.5, font_size=25)
         self.text_list.append(background_text)
 
-        background_clean = CustomizeButton(view=self, file="backgrounds/backg_clean.png", text="Clean", x=675, y=575,
-                                           theme=self.theme)
+        background_clean = CustomizeButton(view=self, file="backgrounds/backg_clean.png", text="Clean",
+                                           x=self.width / 2 + 250, y=self.height / 1.5 - 75, theme=self.theme)
         self.button_list.append(background_clean)
 
-        background_forest = CustomizeButton(view=self, file="backgrounds/backg_forest.png", text="Forest", x=675, y=500,
-                                            theme=self.theme)
+        background_forest = CustomizeButton(view=self, file="backgrounds/backg_forest.png", text="Forest",
+                                            x=self.width / 2 + 250, y=self.height / 1.5 - 150, theme=self.theme)
         self.button_list.append(background_forest)
 
         background_mountains = CustomizeButton(view=self, file="backgrounds/backg_mountains.png", text="Mountains",
-                                               x=675, y=425, theme=self.theme)
+                                               x=self.width / 2 + 250, y=self.height / 1.5 - 225, theme=self.theme)
         self.button_list.append(background_mountains)
 
-        background_sea = CustomizeButton(view=self, file="backgrounds/backg_sea.png", text="Sea", x=675, y=350,
-                                         theme=self.theme)
+        background_sea = CustomizeButton(view=self, file="backgrounds/backg_sea.png", text="Sea",
+                                         x=self.width / 2 + 250, y=self.height / 1.5 - 300, theme=self.theme)
         self.button_list.append(background_sea)
 
     """def set_speed(self):
