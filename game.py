@@ -65,7 +65,8 @@ class CustomizeButton(arcade.TextButton):
             self.view.player_sprite = new_player_sprite
         elif "backg" in self.file:
             background = arcade.load_texture(f"sprites/{self.file}")
-            menu_view = MenuView(background, self.view.player_sprite, self.view.target)
+            menu_view = MenuView(background, self.view.player_sprite, self.view.target, self.view.height,
+                                 self.view.width)
             menu_view.setup()
             self.view.window.show_view(menu_view)
         elif "speed" in self.file:
@@ -86,8 +87,8 @@ class ScreenView(arcade_gui.UIView):
         super().__init__()
         self.theme = None
         self.player_sprite = player_sprite
-        self.width = 1920
-        self.height = 1080
+        self.width = 1280
+        self.height = 720
 
     def set_button_textures(self):
         default = "sprites/button_default.png"
@@ -104,16 +105,16 @@ class ScreenView(arcade_gui.UIView):
         self.set_buttons()
 
         input_box_width = arcade_gui.UIInputBox(
-            center_x=SCREEN_WIDTH / 2,
-            center_y=SCREEN_HEIGHT / 2,
+            center_x=self.width / 2,
+            center_y=self.height / 2,
             width=250,
             height=75,
             id="width_box"
         )
 
         input_box_height = arcade_gui.UIInputBox(
-            center_x=SCREEN_WIDTH / 2,
-            center_y=SCREEN_HEIGHT / 2 - 150,
+            center_x=self.width / 2,
+            center_y=self.height / 2 - 150,
             width=250,
             height=75,
             id="height_box"
@@ -125,8 +126,8 @@ class ScreenView(arcade_gui.UIView):
     def set_buttons(self):
         submit_button = arcade_gui.UIFlatButton(
             text='Submit',
-            center_x=int(SCREEN_WIDTH / 2),
-            center_y=int(SCREEN_HEIGHT / 2) - 250,
+            center_x=int(self.width / 2),
+            center_y=int(self.height/ 2) - 250,
             width=200,
             height=40,
             id='submit_button'
@@ -139,11 +140,11 @@ class ScreenView(arcade_gui.UIView):
         super().on_draw()
         self.player_sprite.draw()
 
-        arcade.draw_text("Set Display Size", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.5,
+        arcade.draw_text("Set Display Size", self.width / 2, self.height / 1.5,
                          arcade.color.WHITE, 50, anchor_x="center")
-        arcade.draw_text("Width", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 50,
+        arcade.draw_text("Width", self.width / 2, self.height / 2 + 50,
                          arcade.color.WHITE, 30, anchor_x="center")
-        arcade.draw_text("Height", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 100,
+        arcade.draw_text("Height", self.width / 2, self.height / 2 - 100,
                          arcade.color.WHITE, 30, anchor_x="center")
 
     def on_mouse_motion(self, x, y, dx, dy):
@@ -168,7 +169,8 @@ class ScreenView(arcade_gui.UIView):
 
         window = arcade.Window(int(self.width), int(self.height), fullscreen=True, title="MapGame")
         window.set_mouse_visible(False)
-        menu_view = MenuView(background=DEFAULT_BACKGROUND, target=DEFAULT_TARGET, player_sprite=DEFAULT_PLAYER_SPRITE)
+        menu_view = MenuView(background=DEFAULT_BACKGROUND, target=DEFAULT_TARGET, player_sprite=DEFAULT_PLAYER_SPRITE,
+                             height=int(self.height), width=int(self.width))
         menu_view.setup()
         window.show_view(menu_view)
         arcade.run()
@@ -177,8 +179,10 @@ class ScreenView(arcade_gui.UIView):
 # start screen including any buttons to go further
 class MenuView(arcade.View):
 
-    def __init__(self, background, player_sprite, target):
+    def __init__(self, background, player_sprite, target, height, width):
         super().__init__()
+        self.height = height
+        self.width = width
         self.player_sprite = player_sprite
         self.theme = None
         self.background = background
@@ -201,10 +205,12 @@ class MenuView(arcade.View):
     def set_buttons(self):
         start_button = MenuButton(self, "Start Game", 640, 430,
                                   GameView(background=self.background, player_sprite=self.player_sprite,
-                                           target=self.target, score=0), arcade.color.WHITE, self.theme)
+                                           target=self.target, score=0, height=self.height, width=self.width),
+                                  arcade.color.WHITE, self.theme)
         customize_button = MenuButton(self, "Customize", 640, 340,
                                       CustomizeView(background=self.background, player_sprite=self.player_sprite,
-                                                    target=self.target), arcade.color.WHITE, self.theme)
+                                                    target=self.target, height=self.height, width=self.width),
+                                      arcade.color.WHITE, self.theme)
         exit_button = ExitButton(self, "Exit Game", 640, 250, font_color=arcade.color.WHITE, theme=self.theme)
 
         self.button_list.append(start_button)
@@ -213,11 +219,11 @@ class MenuView(arcade.View):
 
     def on_draw(self):
         arcade.start_render()
-        arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
+        arcade.draw_lrwh_rectangle_textured(0, 0, self.width, self.height, self.background)
         super().on_draw()
         self.player_sprite.draw()
 
-        arcade.draw_text("Game Menu", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.5,
+        arcade.draw_text("Game Menu", self.width / 2, self.height / 1.5,
                          arcade.color.WHITE, 50, anchor_x="center")
 
     def on_mouse_motion(self, x, y, dx, dy):
@@ -228,8 +234,10 @@ class MenuView(arcade.View):
 # view where the game will be played and displayed
 class GameView(arcade.View):
 
-    def __init__(self, background, player_sprite, target, score):
+    def __init__(self, background, player_sprite, target, height, width, score):
         super().__init__()
+        self.height = height
+        self.width = width
 
         self.background = background
         self.target = target
@@ -264,7 +272,7 @@ class GameView(arcade.View):
 
     def on_draw(self):
         arcade.start_render()
-        arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
+        arcade.draw_lrwh_rectangle_textured(0, 0, self.width, self.height, self.background)
         self.target_list.draw()
         super().on_draw()
         self.player_list.draw()
@@ -275,7 +283,7 @@ class GameView(arcade.View):
     def on_key_press(self, symbol: int, _modifiers):
         if symbol == arcade.key.ESCAPE:
             pause_view = PauseView(background=self.background, player_sprite=self.player_sprite, target=self.target,
-                                   score=self.score)
+                                   score=self.score, height=self.height, width=self.width)
             pause_view.setup()
             self.window.show_view(pause_view)
 
@@ -288,15 +296,15 @@ class GameView(arcade.View):
         if targets:
             for target in targets:
                 target.remove_from_sprite_lists()
-                self.target.center_x = random.randrange(SCREEN_WIDTH)
-                self.target.center_y = random.randrange(SCREEN_HEIGHT)
+                self.target.center_x = random.randrange(self.width)
+                self.target.center_y = random.randrange(self.height)
                 self.target_list.append(self.target)
                 self.score += 1
         else:
             for target in self.target_list:
                 target.remove_from_sprite_lists()
-                self.target.center_x = random.randrange(SCREEN_WIDTH)
-                self.target.center_y = random.randrange(SCREEN_HEIGHT)
+                self.target.center_x = random.randrange(self.width)
+                self.target.center_y = random.randrange(self.height)
                 self.target_list.append(self.target)
 
     def update(self, delta_time: float):
@@ -306,8 +314,10 @@ class GameView(arcade.View):
 # pause menu that will be available by pressing "escape"
 class PauseView(arcade.View):
 
-    def __init__(self, background, player_sprite, target, score):
+    def __init__(self, background, player_sprite, target, height, width, score):
         super().__init__()
+        self.height = height
+        self.width = width
 
         self.background = background
         self.target = target
@@ -339,25 +349,26 @@ class PauseView(arcade.View):
     def set_buttons(self):
         leave_button = MenuButton(self, "Back To Menu", 640, 290,
                                   MenuView(background=self.background, player_sprite=self.player_sprite,
-                                           target=self.target), arcade.color.WHITE, self.theme)
+                                           target=self.target, height=self.height, width=self.width),
+                                  arcade.color.WHITE, self.theme)
         self.button_list.append(leave_button)
 
     def on_draw(self):
         arcade.start_render()
-        arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
+        arcade.draw_lrwh_rectangle_textured(0, 0, self.width, self.height, self.background)
         super().on_draw()
         self.player_list.draw()
 
         score_text = f"Hits: {self.score}"
         arcade.draw_text(score_text, 20, 680, arcade.color.BLACK, 25)
-        arcade.draw_text("Game Paused", SCREEN_WIDTH / 3, SCREEN_HEIGHT / 2, arcade.color.BLACK, 60)
-        arcade.draw_text("Press ESCAPE To Return to Game", SCREEN_WIDTH / 2.5, SCREEN_HEIGHT / 2 - 15,
+        arcade.draw_text("Game Paused", self.width / 3, self.height / 2, arcade.color.BLACK, 60)
+        arcade.draw_text("Press ESCAPE To Return to Game", self.width / 2.5, self.height / 2 - 15,
                          arcade.color.BLACK, 15)
 
     def on_key_press(self, symbol: int, _modifiers):
         if symbol == arcade.key.ESCAPE:
             game_view = GameView(background=self.background, player_sprite=self.player_sprite, target=self.target,
-                                 score=self.score)
+                                 score=self.score, height=self.height, width=self.width)
             game_view.setup()
             self.window.show_view(game_view)
 
@@ -368,8 +379,10 @@ class PauseView(arcade.View):
 
 # the view where users can customize most thing of the game like crosshair or background
 class CustomizeView(arcade.View):
-    def __init__(self, background, player_sprite, target):
+    def __init__(self, background, player_sprite, target, height, width):
         super().__init__()
+        self.height = height
+        self.width = width
         self.player_sprite = player_sprite
         self.theme = None
         self.background = background
@@ -463,11 +476,11 @@ class CustomizeView(arcade.View):
 
     def on_draw(self):
         arcade.start_render()
-        arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
+        arcade.draw_lrwh_rectangle_textured(0, 0, self.width, self.height, self.background)
         super().on_draw()
         self.player_sprite.draw()
 
-        arcade.draw_text("Customizations", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 1.1,
+        arcade.draw_text("Customizations", self.width / 2, self.height / 1.1,
                          arcade.color.WHITE, 50, anchor_x="center")
 
     def on_mouse_motion(self, x, y, dx, dy):
@@ -476,7 +489,8 @@ class CustomizeView(arcade.View):
 
     def on_key_press(self, symbol: int, _modifiers):
         if symbol == arcade.key.ESCAPE:
-            menu_view = MenuView(background=self.background, player_sprite=self.player_sprite, target=self.target)
+            menu_view = MenuView(background=self.background, player_sprite=self.player_sprite, target=self.target,
+                                 height=self.height, width=self.width)
             menu_view.setup()
             self.window.show_view(menu_view)
 
