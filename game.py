@@ -2,6 +2,7 @@ import arcade
 import json
 import random
 import arcade_gui
+import time
 
 
 # declaring constants and default values
@@ -207,7 +208,7 @@ class MenuView(arcade.View):
     def set_buttons(self):
         start_button = MenuButton(self, "Start Game", self.width / 2, self.height / 2,
                                   GameView(background=self.background, player_sprite=self.player_sprite,
-                                           target=self.target, score=0, height=self.height, width=self.width),
+                                           target=self.target, score=0, missed=0, height=self.height, width=self.width),
                                   font_color=arcade.color.WHITE, theme=self.theme)
         customize_button = MenuButton(self, "Customize", self.width / 2, self.height / 2 - 100,
                                       CustomizeView(background=self.background, player_sprite=self.player_sprite,
@@ -237,7 +238,7 @@ class MenuView(arcade.View):
 # view where the game will be played and displayed
 class GameView(arcade.View):
 
-    def __init__(self, background, player_sprite, target, height, width, score):
+    def __init__(self, background, player_sprite, target, height, width, score, missed):
         super().__init__()
         self.height = height
         self.width = width
@@ -250,6 +251,10 @@ class GameView(arcade.View):
         self.target_list = arcade.SpriteList()
 
         self.score = score
+        self.missed = missed
+        self.timer = 0
+        self.old_time = time.time()
+
         self.player_sprite = player_sprite
         self.player_sprite.center_x = 640
         self.player_sprite.center_y = 360
@@ -283,10 +288,16 @@ class GameView(arcade.View):
         score_text = f"Hits: {self.score}"
         arcade.draw_text(score_text, 20, self.height - 50, arcade.color.BLACK, 25)
 
+        missed_text = f"Missed: {self.missed}"
+        arcade.draw_text(missed_text, 20, self.height - 100, arcade.color.BLACK, 25)
+
+        timer_text = f"Reaction Time: {round(self.timer, 3)}"
+        arcade.draw_text(timer_text, 20, self.height - 150, arcade.color.BLACK, 25)
+
     def on_key_press(self, symbol: int, _modifiers):
         if symbol == arcade.key.ESCAPE:
             pause_view = PauseView(background=self.background, player_sprite=self.player_sprite, target=self.target,
-                                   score=self.score, height=self.height, width=self.width)
+                                   score=self.score, missed=self.missed, height=self.height, width=self.width)
             pause_view.setup()
             self.window.show_view(pause_view)
 
@@ -297,6 +308,8 @@ class GameView(arcade.View):
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
         targets = arcade.get_sprites_at_point([x, y], self.target_list)
         if targets:
+            self.timer = time.time() - self.old_time
+            self.old_time = time.time()
             for target in targets:
                 target.remove_from_sprite_lists()
                 self.target.center_x = random.randrange(self.width)
@@ -304,11 +317,7 @@ class GameView(arcade.View):
                 self.target_list.append(self.target)
                 self.score += 1
         else:
-            for target in self.target_list:
-                target.remove_from_sprite_lists()
-                self.target.center_x = random.randrange(self.width)
-                self.target.center_y = random.randrange(self.height)
-                self.target_list.append(self.target)
+            self.missed += 1
 
     def update(self, delta_time: float):
         self.target_list.update()
@@ -317,7 +326,7 @@ class GameView(arcade.View):
 # pause menu that will be available by pressing "escape"
 class PauseView(arcade.View):
 
-    def __init__(self, background, player_sprite, target, height, width, score):
+    def __init__(self, background, player_sprite, target, height, width, score, missed):
         super().__init__()
         self.height = height
         self.width = width
@@ -330,6 +339,8 @@ class PauseView(arcade.View):
         self.target_list = arcade.SpriteList()
 
         self.score = score
+        self.missed = missed
+
         self.player_sprite = player_sprite
         self.player_sprite.center_x = 640
         self.player_sprite.center_y = 360
@@ -371,7 +382,7 @@ class PauseView(arcade.View):
     def on_key_press(self, symbol: int, _modifiers):
         if symbol == arcade.key.ESCAPE:
             game_view = GameView(background=self.background, player_sprite=self.player_sprite, target=self.target,
-                                 score=self.score, height=self.height, width=self.width)
+                                 score=self.score, missed=self.missed, height=self.height, width=self.width)
             game_view.setup()
             self.window.show_view(game_view)
 
