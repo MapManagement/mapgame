@@ -4,7 +4,6 @@ import random
 import arcade_gui
 import time
 
-
 # declaring constants and default values
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
@@ -130,7 +129,7 @@ class ScreenView(arcade_gui.UIView):
         submit_button = arcade_gui.UIFlatButton(
             text='Submit',
             center_x=int(self.width / 2),
-            center_y=int(self.height/ 2) - 250,
+            center_y=int(self.height / 2) - 250,
             width=200,
             height=40,
             id='submit_button'
@@ -157,7 +156,7 @@ class ScreenView(arcade_gui.UIView):
     def on_event(self, event: arcade_gui.UIEvent):
         super(ScreenView, self).on_event(event)
 
-        if event.type == arcade_gui.UIFlatButton.CLICKED and event.ui_element.id == "submit_button"\
+        if event.type == arcade_gui.UIFlatButton.CLICKED and event.ui_element.id == "submit_button" \
                 and self.find_by_id("height_box").text != "" and self.find_by_id("width_box").text != "":
             self.open_menu()
 
@@ -172,7 +171,7 @@ class ScreenView(arcade_gui.UIView):
 
         window = arcade.Window(int(self.width), int(self.height), fullscreen=True, title="MapGame")
         window.set_mouse_visible(False)
-        menu_view = MenuView(background=DEFAULT_BACKGROUND, target=DEFAULT_TARGET, player_sprite=self.player_sprite,
+        menu_view = MenuView(background=DEFAULT_BACKGROUND, player_sprite=self.player_sprite, target=DEFAULT_TARGET,
                              height=int(self.height), width=int(self.width))
         menu_view.setup()
         window.show_view(menu_view)
@@ -186,9 +185,10 @@ class MenuView(arcade.View):
         super().__init__()
         self.height = height
         self.width = width
-        self.player_sprite = player_sprite
         self.theme = None
         self.background = background
+
+        self.player_sprite = player_sprite
         self.target = target
 
     def set_button_textures(self):
@@ -256,8 +256,8 @@ class GameView(arcade.View):
         self.old_time = time.time()
 
         self.player_sprite = player_sprite
-        self.player_sprite.center_x = 640
-        self.player_sprite.center_y = 360
+        self.player_sprite.center_x = self.width / 2
+        self.player_sprite.center_y = self.height / 2
         self.player_list.append(self.player_sprite)
 
     def set_button_textures(self):
@@ -342,8 +342,8 @@ class PauseView(arcade.View):
         self.missed = missed
 
         self.player_sprite = player_sprite
-        self.player_sprite.center_x = 640
-        self.player_sprite.center_y = 360
+        self.player_sprite.center_x = self.width / 2
+        self.player_sprite.center_y = self.height / 2
         self.player_list.append(self.player_sprite)
 
     def set_button_textures(self):
@@ -417,7 +417,7 @@ class CustomizeView(arcade.View):
         self.set_targets()
         self.set_crosshairs()
         self.set_backgrounds()
-        # self.set_speed()
+        self.set_speed()
 
     def set_targets(self):
         target_text = TextLabel(text="Targets", x=self.width / 2 - 250, y=self.height / 1.5, font_size=25)
@@ -472,24 +472,29 @@ class CustomizeView(arcade.View):
                                          x=self.width / 2 + 250, y=self.height / 1.5 - 300, theme=self.theme)
         self.button_list.append(background_sea)
 
-    """def set_speed(self):
-        background_text = TextLabel(text="Speed", x=925, y=625, font_size=25)
+    def set_speed(self):
+        background_text = TextLabel(text="Speed", x=self.width / 2 + 500, y=self.height / 1.5, font_size=25)
         self.text_list.append(background_text)
 
-        speed_beginner = CustomizeButton(text="Beginner", x=925, y=575, theme=self.theme)
+        speed_beginner = CustomizeButton(view=self, file="", text="Beginner",
+                                         x=self.width / 2 + 500, y=self.height / 1.5 - 75, theme=self.theme)
         self.button_list.append(speed_beginner)
 
-        speed_slow = CustomizeButton(text="Slow", x=925, y=500, theme=self.theme)
+        speed_slow = CustomizeButton(view=self, file="", text="Slow",
+                                     x=self.width / 2 + 500, y=self.height / 1.5 - 150, theme=self.theme)
         self.button_list.append(speed_slow)
 
-        speed_medium = CustomizeButton(text="Medium", x=925, y=425, theme=self.theme)
+        speed_medium = CustomizeButton(view=self, file="", text="Medium",
+                                       x=self.width / 2 + 500, y=self.height / 1.5 - 225, theme=self.theme)
         self.button_list.append(speed_medium)
 
-        speed_fast = CustomizeButton(text="Fast", x=925, y=350, theme=self.theme)
+        speed_fast = CustomizeButton(view=self, file="", text="Fast",
+                                     x=self.width / 2 + 500, y=self.height / 1.5 - 300, theme=self.theme)
         self.button_list.append(speed_fast)
 
-        speed_ultra = CustomizeButton(text="Ultra", x=925, y=275, theme=self.theme)
-        self.button_list.append(speed_ultra)"""
+        speed_ultra = CustomizeButton(view=self, file="", text="Ultra",
+                                      x=self.width / 2 + 500, y=self.height / 1.5 - 375, theme=self.theme)
+        self.button_list.append(speed_ultra)
 
     def on_draw(self):
         arcade.start_render()
