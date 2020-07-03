@@ -417,7 +417,7 @@ class CustomizeView(arcade.View):
         self.set_targets()
         self.set_crosshairs()
         self.set_backgrounds()
-        self.set_speed()
+        self.set_mode()
 
     def set_targets(self):
         target_text = TextLabel(text="Targets", x=self.width / 2 - 250, y=self.height / 1.5, font_size=25)
@@ -472,29 +472,25 @@ class CustomizeView(arcade.View):
                                          x=self.width / 2 + 250, y=self.height / 1.5 - 300, theme=self.theme)
         self.button_list.append(background_sea)
 
-    def set_speed(self):
-        background_text = TextLabel(text="Speed", x=self.width / 2 + 500, y=self.height / 1.5, font_size=25)
-        self.text_list.append(background_text)
+    def set_mode(self):
+        mode_text = TextLabel(text="Mode", x=self.width / 2 + 500, y=self.height / 1.5, font_size=25)
+        self.text_list.append(mode_text)
 
-        speed_beginner = CustomizeButton(view=self, file="", text="Beginner",
-                                         x=self.width / 2 + 500, y=self.height / 1.5 - 75, theme=self.theme)
-        self.button_list.append(speed_beginner)
+        mode_clicking = CustomizeButton(view=self, file="", text="Clicking",
+                                        x=self.width / 2 + 500, y=self.height / 1.5 - 75, theme=self.theme)
+        self.button_list.append(mode_clicking)
 
-        speed_slow = CustomizeButton(view=self, file="", text="Slow",
-                                     x=self.width / 2 + 500, y=self.height / 1.5 - 150, theme=self.theme)
-        self.button_list.append(speed_slow)
+        mode_tracking = CustomizeButton(view=self, file="", text="Tracking",
+                                        x=self.width / 2 + 500, y=self.height / 1.5 - 150, theme=self.theme)
+        self.button_list.append(mode_tracking)
 
-        speed_medium = CustomizeButton(view=self, file="", text="Medium",
-                                       x=self.width / 2 + 500, y=self.height / 1.5 - 225, theme=self.theme)
-        self.button_list.append(speed_medium)
+        mode_flicking = CustomizeButton(view=self, file="", text="Flicking",
+                                        x=self.width / 2 + 500, y=self.height / 1.5 - 225, theme=self.theme)
+        self.button_list.append(mode_flicking)
 
-        speed_fast = CustomizeButton(view=self, file="", text="Fast",
-                                     x=self.width / 2 + 500, y=self.height / 1.5 - 300, theme=self.theme)
-        self.button_list.append(speed_fast)
-
-        speed_ultra = CustomizeButton(view=self, file="", text="Ultra",
-                                      x=self.width / 2 + 500, y=self.height / 1.5 - 375, theme=self.theme)
-        self.button_list.append(speed_ultra)
+        mode_pure_reaction = CustomizeButton(view=self, file="", text="Pure Reaction",
+                                             x=self.width / 2 + 500, y=self.height / 1.5 - 300, theme=self.theme)
+        self.button_list.append(mode_pure_reaction)
 
     def on_draw(self):
         arcade.start_render()
