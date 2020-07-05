@@ -3,6 +3,7 @@ import json
 import random
 import arcade_gui
 import time
+import timeit
 
 # declaring constants and default values
 SCREEN_WIDTH = 1280
@@ -243,6 +244,11 @@ class GameView(arcade.View):
         self.height = height
         self.width = width
 
+        self.draw_time = 0
+        self.frame_count = 0
+        self.fps_start_timer = None
+        self.fps = None
+
         self.background = background
         self.target = target
         self.theme = None
@@ -279,6 +285,14 @@ class GameView(arcade.View):
         self.target_list.append(self.target)
 
     def on_draw(self):
+        draw_start_time = timeit.default_timer()
+        if self.frame_count % 60 == 0:
+            if self.fps_start_timer is not None:
+                total_time = timeit.default_timer() - self.fps_start_timer
+                self.fps = 60 / total_time
+            self.fps_start_timer = timeit.default_timer()
+        self.frame_count += 1
+
         arcade.start_render()
         arcade.draw_lrwh_rectangle_textured(0, 0, self.width, self.height, self.background)
         self.target_list.draw()
@@ -293,6 +307,12 @@ class GameView(arcade.View):
 
         timer_text = f"Reaction Time: {round(self.timer, 3)}"
         arcade.draw_text(timer_text, 20, self.height - 150, arcade.color.BLACK, 25)
+
+        if self.fps is not None:
+            fps_text = f"FPS: {round(self.fps, 1)}"
+            arcade.draw_text(fps_text, 20, self.height - 200, arcade.color.BLACK, 25)
+
+        self.draw_time = timeit.default_timer() - draw_start_time
 
     def on_key_press(self, symbol: int, _modifiers):
         if symbol == arcade.key.ESCAPE:
