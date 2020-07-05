@@ -13,3 +13,10 @@ background...) that can be customized by choosing other files in the so called
 "CustomizeView". But I'm planning on a feature that allows the player to import
 any files he wants to use as a crosshair, target or something else. If you want
 to share your ideas, simply just "pull request".
+
+# ToDo
+-[ ] implementing more game modes
+-[ ] fixing player sprite bug when opening MenuView
+-[ ] improving texture quality of sprites and background
+-[ ] adding option for adjusting mouse sensitivity
+-[ ] importing custom sprites
