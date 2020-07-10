@@ -84,32 +84,43 @@ class TextLabel(gui.UILabel):
                          color=color)
 
 
+class SubmitButton(gui.UIFlatButton):
+    def __init__(self, text, center_x, center_y, width, height, id, screensize, window):
+        super().__init__(text=text, center_x=center_x, center_y=center_y, width=width, height=height, id=id)
+
+        self.screensize = screensize
+        self.window = window
+
+    def on_press(self):
+        if self.screensize[0] != "" and self.screensize[1] != "":
+
+            self.window.close()
+
+            window = arcade.Window(int(self.screensize[0]), int(self.screensize[1]), fullscreen=True, title="MapGame")
+            window.set_mouse_visible(False)
+            menu_view = MenuView(background=DEFAULT_BACKGROUND, player_sprite=DEFAULT_PLAYER_SPRITE,
+                                 target=DEFAULT_TARGET, height=int(self.screensize[1]), width=int(self.screensize[0]))
+            menu_view.setup()
+            window.show_view(menu_view)
+            arcade.run()
+
+
 # first screen you see when starting the game, you have to set the size of your display
-class ScreenView(arcade_gui.UIView):
+class ScreenView(arcade.View):
 
     def __init__(self, player_sprite):
         super().__init__()
+        self.ui_manager = UIManager(self.window)
+
         self.height = 720
         self.width = 1280
 
-        self.theme = None
+        self.style = None
 
         self.player_sprite = player_sprite
 
-    def set_button_textures(self):
-        default = "sprites/button_default.png"
-        hover = "sprites/button_hover.png"
-        clicked = "sprites/button_locked.png"
-        self.theme.add_button_textures(default, hover, clicked)
-
-    def setup_theme(self):
-        """self.theme = arcade.Theme()"""
-        self.set_button_textures()
-
     def setup(self):
-        self.set_buttons()
-
-        input_box_width = arcade_gui.UIInputBox(
+        input_box_width = gui.UIInputBox(
             center_x=self.width / 2,
             center_y=self.height / 2,
             width=250,
@@ -117,8 +128,13 @@ class ScreenView(arcade_gui.UIView):
             text=str(1920),
             id="width_box"
         )
+        input_box_width.set_style_attrs(
+            font_color=arcade.color.WHITE,
+            bg_color=arcade.color.BLACK,
+            bg_color_hover=arcade.color.DAVY_GREY
+        )
 
-        input_box_height = arcade_gui.UIInputBox(
+        input_box_height = gui.UIInputBox(
             center_x=self.width / 2,
             center_y=self.height / 2 - 150,
             width=250,
@@ -126,20 +142,36 @@ class ScreenView(arcade_gui.UIView):
             text=str(1080),
             id="height_box"
         )
+        input_box_height.set_style_attrs(
+            font_color=arcade.color.WHITE,
+            bg_color=arcade.color.BLACK,
+            bg_color_hover=arcade.color.DAVY_GREY
+        )
 
-        self.add_ui_element(input_box_width)
-        self.add_ui_element(input_box_height)
+        self.ui_manager.add_ui_element(input_box_width)
+        self.ui_manager.add_ui_element(input_box_height)
+
+        self.set_buttons()
 
     def set_buttons(self):
-        submit_button = arcade_gui.UIFlatButton(
+        submit_button = SubmitButton(
             text='Submit',
             center_x=int(self.width / 2),
             center_y=int(self.height / 2) - 250,
             width=200,
             height=40,
-            id='submit_button'
+            id='submit_button',
+            screensize=[int(self.ui_manager.find_by_id("width_box").text),
+                        int(self.ui_manager.find_by_id("height_box").text)],
+            window=self.window
         )
-        self.add_ui_element(submit_button)
+        submit_button.set_style_attrs(
+            font_color=arcade.color.WHITE,
+            bg_color=arcade.color.BLACK,
+            bg_color_hover=arcade.color.DAVY_GREY
+        )
+        submit_button.on_click()
+        self.ui_manager.add_ui_element(submit_button)
 
     def on_draw(self):
         arcade.start_render()
@@ -157,30 +189,6 @@ class ScreenView(arcade_gui.UIView):
     def on_mouse_motion(self, x, y, dx, dy):
         self.player_sprite.center_x = x
         self.player_sprite.center_y = y
-
-    def on_event(self, event: arcade_gui.UIEvent):
-        super(ScreenView, self).on_event(event)
-
-        if event.type == arcade_gui.UIFlatButton.CLICKED and event.ui_element.id == "submit_button" \
-                and self.find_by_id("height_box").text != "" and self.find_by_id("width_box").text != "":
-            self.open_menu()
-
-    def open_menu(self):
-        height_input: arcade_gui.UIInputBox = self.find_by_id("height_box")
-        self.height = height_input.text
-
-        width_input: arcade_gui.UIInputBox = self.find_by_id("width_box")
-        self.width = width_input.text
-
-        self.window.close()
-
-        window = arcade.Window(int(self.width), int(self.height), fullscreen=True, title="MapGame")
-        window.set_mouse_visible(False)
-        menu_view = MenuView(background=DEFAULT_BACKGROUND, player_sprite=self.player_sprite, target=DEFAULT_TARGET,
-                             height=int(self.height), width=int(self.width))
-        menu_view.setup()
-        window.show_view(menu_view)
-        arcade.run()
 
 
 # start screen including any buttons to go further
