@@ -4,6 +4,8 @@ import random
 import arcade_gui
 import time
 import timeit
+from arcade import gui
+from arcade.gui import UIManager
 
 # declaring constants and default values
 SCREEN_WIDTH = 1280
@@ -23,7 +25,7 @@ def load_sprite_scales():
 
 
 # classes that will be used within the views
-class MenuButton(arcade.TextButton):
+class MenuButton(gui.UIFlatButton):
 
     def __init__(self, view, text, x, y, open_view, font_color=arcade.color.WHITE, theme=None):
         super().__init__(text=text, center_x=x, center_y=y, width=250, height=75, theme=theme)
@@ -36,7 +38,7 @@ class MenuButton(arcade.TextButton):
         self.view.window.show_view(self.open_view)
 
 
-class ExitButton(arcade.TextButton):
+class ExitButton(gui.UIFlatButton):
     def __init__(self, view, text, x=0, y=0, width=250, height=75, color=arcade.color.ROYAL_AZURE,
                  font_color=arcade.color.BLACK, secondary_color=arcade.color.BLACK, theme=None):
         super().__init__(text=text, center_x=x, center_y=y, width=width, height=height, face_color=color,
@@ -48,7 +50,7 @@ class ExitButton(arcade.TextButton):
         self.view.window.close()
 
 
-class CustomizeButton(arcade.TextButton):
+class CustomizeButton(gui.UIFlatButton):
     def __init__(self, view, text, x, y, file, font_color=arcade.color.WHITE, theme=None):
         super().__init__(text=text, center_x=x, center_y=y, width=200, height=50, theme=theme)
         self.font_color = font_color
@@ -76,9 +78,10 @@ class CustomizeButton(arcade.TextButton):
             pass
 
 
-class TextLabel(arcade.TextLabel):
-    def __init__(self, text, x=0, y=0, font_size=15, font_name="Calibri", color=arcade.color.WHITE):
-        super().__init__(text=text, x=x, y=y, font_size=font_size, font_name=font_name, color=color)
+class TextLabel(gui.UILabel):
+    def __init__(self, text, center_x=0, center_y=0, font_size=15, font_name="Calibri", color=arcade.color.WHITE):
+        super().__init__(text=text, center_x=center_x, center_y=center_y, font_size=font_size, font_name=font_name,
+                         color=color)
 
 
 # first screen you see when starting the game, you have to set the size of your display
@@ -86,10 +89,12 @@ class ScreenView(arcade_gui.UIView):
 
     def __init__(self, player_sprite):
         super().__init__()
-        self.theme = None
-        self.player_sprite = player_sprite
-        self.width = 1280
         self.height = 720
+        self.width = 1280
+
+        self.theme = None
+
+        self.player_sprite = player_sprite
 
     def set_button_textures(self):
         default = "sprites/button_default.png"
@@ -98,11 +103,10 @@ class ScreenView(arcade_gui.UIView):
         self.theme.add_button_textures(default, hover, clicked)
 
     def setup_theme(self):
-        self.theme = arcade.Theme()
+        """self.theme = arcade.Theme()"""
         self.set_button_textures()
 
     def setup(self):
-        self.setup_theme()
         self.set_buttons()
 
         input_box_width = arcade_gui.UIInputBox(
@@ -184,6 +188,8 @@ class MenuView(arcade.View):
 
     def __init__(self, background, player_sprite, target, height, width):
         super().__init__()
+        self.ui_manager = UIManager(self.window)
+
         self.height = height
         self.width = width
         self.theme = None
@@ -199,11 +205,10 @@ class MenuView(arcade.View):
         self.theme.add_button_textures(default, hover, clicked)
 
     def setup_theme(self):
-        self.theme = arcade.Theme()
+        """self.theme = arcade.Theme()"""
         self.set_button_textures()
 
     def setup(self):
-        self.setup_theme()
         self.set_buttons()
 
     def set_buttons(self):
@@ -218,9 +223,9 @@ class MenuView(arcade.View):
         exit_button = ExitButton(self, "Exit Game", self.width / 2, self.height / 2 - 200,
                                  font_color=arcade.color.WHITE, theme=self.theme)
 
-        self.button_list.append(start_button)
-        self.button_list.append(customize_button)
-        self.button_list.append(exit_button)
+        self.ui_manager.add_ui_element(start_button)
+        self.ui_manager.add_ui_element(customize_button)
+        self.ui_manager.add_ui_element(exit_button)
 
     def on_draw(self):
         arcade.start_render()
@@ -241,6 +246,8 @@ class GameView(arcade.View):
 
     def __init__(self, background, player_sprite, target, height, width, score, missed):
         super().__init__()
+        self.ui_manager = UIManager(self.window)
+
         self.height = height
         self.width = width
 
@@ -273,12 +280,10 @@ class GameView(arcade.View):
         self.theme.add_button_textures(default, hover, clicked)
 
     def setup_theme(self):
-        self.theme = arcade.Theme()
+        """self.theme = arcade.Theme()"""
         self.set_button_textures()
 
     def setup(self):
-        self.setup_theme()
-
         self.target_list = arcade.SpriteList()
         self.target.center_x = random.randrange(SCREEN_WIDTH)
         self.target.center_y = random.randrange(SCREEN_HEIGHT)
@@ -348,6 +353,8 @@ class PauseView(arcade.View):
 
     def __init__(self, background, player_sprite, target, height, width, score, missed):
         super().__init__()
+        self.ui_manager = UIManager(self.window)
+
         self.height = height
         self.width = width
 
@@ -373,11 +380,11 @@ class PauseView(arcade.View):
         self.theme.add_button_textures(default, hover, clicked)
 
     def setup_theme(self):
-        self.theme = arcade.Theme()
+        """self.theme = arcade.Theme()"""
         self.set_button_textures()
 
     def setup(self):
-        self.setup_theme()
+
         self.set_buttons()
 
     def set_buttons(self):
@@ -385,7 +392,7 @@ class PauseView(arcade.View):
                                   MenuView(background=self.background, player_sprite=self.player_sprite,
                                            target=self.target, height=self.height, width=self.width),
                                   arcade.color.WHITE, self.theme)
-        self.button_list.append(leave_button)
+        self.ui_manager.add_ui_element(leave_button)
 
     def on_draw(self):
         arcade.start_render()
@@ -415,6 +422,8 @@ class PauseView(arcade.View):
 class CustomizeView(arcade.View):
     def __init__(self, background, player_sprite, target, height, width):
         super().__init__()
+        self.ui_manager = UIManager(self.window)
+
         self.height = height
         self.width = width
         self.player_sprite = player_sprite
@@ -429,88 +438,99 @@ class CustomizeView(arcade.View):
         self.theme.add_button_textures(default, hover, clicked)
 
     def setup_theme(self):
-        self.theme = arcade.Theme()
+        """self.theme = arcade.Theme()"""
         self.set_button_textures()
 
     def setup(self):
-        self.setup_theme()
+
+        self.set_mouse_speed()
         self.set_targets()
         self.set_crosshairs()
         self.set_backgrounds()
         self.set_mode()
 
+    def set_mouse_speed(self):
+        mouse_speed_text = TextLabel(text="Sensitivity", center_x=self.width / 2 - 500, center_y=self.height / 1.5,
+                                     font_size=25)
+        self.ui_manager.add_ui_element(mouse_speed_text)
+
+        speed_input = gui.UIInputBox(center_x=self.width / 2 - 750, center_y=self.height / 1.5 - 75, font_size=25,
+                                     width=200, height=50)
+        self.ui_manager.add_ui_element(speed_input)
+
     def set_targets(self):
-        target_text = TextLabel(text="Targets", x=self.width / 2 - 250, y=self.height / 1.5, font_size=25)
-        self.text_list.append(target_text)
+        target_text = TextLabel(text="Targets", center_x=self.width / 2 - 250, center_y=self.height / 1.5, font_size=25)
+        self.ui_manager.add_ui_element(target_text)
 
         target_moehre = CustomizeButton(view=self, file="target_moehre.png", text="Moehre", x=self.width / 2 - 250,
                                         y=self.height / 1.5 - 75, theme=self.theme)
-        self.button_list.append(target_moehre)
+        self.ui_manager.add_ui_element(target_moehre)
 
         target_default = CustomizeButton(view=self, file="target_default.png", text="Default", x=self.width / 2 - 250,
                                          y=self.height / 1.5 - 150, theme=self.theme)
-        self.button_list.append(target_default)
+        self.ui_manager.add_ui_element(target_default)
 
     def set_crosshairs(self):
-        crosshair_text = TextLabel(text="Crosshairs", x=self.width / 2, y=self.height / 1.5, font_size=25)
-        self.text_list.append(crosshair_text)
+        crosshair_text = TextLabel(text="Crosshairs", center_x=self.width / 2, center_y=self.height / 1.5, font_size=25)
+        self.ui_manager.add_ui_element(crosshair_text)
 
         crossh_cross = CustomizeButton(view=self, file="crossh_cross.png", text="Cross", x=self.width / 2,
                                        y=self.height / 1.5 - 75, theme=self.theme)
-        self.button_list.append(crossh_cross)
+        self.ui_manager.add_ui_element(crossh_cross)
 
         crossh_dot = CustomizeButton(view=self, file="crossh_dot.png", text="Dot", x=self.width / 2,
                                      y=self.height / 1.5 - 150, theme=self.theme)
-        self.button_list.append(crossh_dot)
+        self.ui_manager.add_ui_element(crossh_dot)
 
         crossh_circle = CustomizeButton(view=self, file="crossh_circle.png", text="Circle", x=self.width / 2,
                                         y=self.height / 1.5 - 225,
                                         theme=self.theme)
-        self.button_list.append(crossh_circle)
+        self.ui_manager.add_ui_element(crossh_circle)
 
         crossh_cross_circle = CustomizeButton(view=self, file="crossh_cross_circle.png", text="Cross & Circle",
                                               x=self.width / 2, y=self.height / 1.5 - 300, theme=self.theme)
-        self.button_list.append(crossh_cross_circle)
+        self.ui_manager.add_ui_element(crossh_cross_circle)
 
     def set_backgrounds(self):
-        background_text = TextLabel(text="Backgrounds", x=self.width / 2 + 250, y=self.height / 1.5, font_size=25)
-        self.text_list.append(background_text)
+        background_text = TextLabel(text="Backgrounds", center_x=self.width / 2 + 250, center_y=self.height / 1.5,
+                                    font_size=25)
+        self.ui_manager.add_ui_element(background_text)
 
         background_clean = CustomizeButton(view=self, file="backgrounds/backg_clean.png", text="Clean",
                                            x=self.width / 2 + 250, y=self.height / 1.5 - 75, theme=self.theme)
-        self.button_list.append(background_clean)
+        self.ui_manager.add_ui_element(background_clean)
 
         background_forest = CustomizeButton(view=self, file="backgrounds/backg_forest.png", text="Forest",
                                             x=self.width / 2 + 250, y=self.height / 1.5 - 150, theme=self.theme)
-        self.button_list.append(background_forest)
+        self.ui_manager.add_ui_element(background_forest)
 
         background_mountains = CustomizeButton(view=self, file="backgrounds/backg_mountains.png", text="Mountains",
                                                x=self.width / 2 + 250, y=self.height / 1.5 - 225, theme=self.theme)
-        self.button_list.append(background_mountains)
+        self.ui_manager.add_ui_element(background_mountains)
 
         background_sea = CustomizeButton(view=self, file="backgrounds/backg_sea.png", text="Sea",
                                          x=self.width / 2 + 250, y=self.height / 1.5 - 300, theme=self.theme)
-        self.button_list.append(background_sea)
+        self.ui_manager.add_ui_element(background_sea)
 
     def set_mode(self):
-        mode_text = TextLabel(text="Mode", x=self.width / 2 + 500, y=self.height / 1.5, font_size=25)
-        self.text_list.append(mode_text)
+        mode_text = TextLabel(text="Mode", center_x=self.width / 2 + 500, center_y=self.height / 1.5, font_size=25)
+        self.ui_manager.add_ui_element(mode_text)
 
         mode_clicking = CustomizeButton(view=self, file="", text="Clicking",
                                         x=self.width / 2 + 500, y=self.height / 1.5 - 75, theme=self.theme)
-        self.button_list.append(mode_clicking)
+        self.ui_manager.add_ui_element(mode_clicking)
 
         mode_tracking = CustomizeButton(view=self, file="", text="Tracking",
                                         x=self.width / 2 + 500, y=self.height / 1.5 - 150, theme=self.theme)
-        self.button_list.append(mode_tracking)
+        self.ui_manager.add_ui_element(mode_tracking)
 
         mode_flicking = CustomizeButton(view=self, file="", text="Flicking",
                                         x=self.width / 2 + 500, y=self.height / 1.5 - 225, theme=self.theme)
-        self.button_list.append(mode_flicking)
+        self.ui_manager.add_ui_element(mode_flicking)
 
         mode_pure_reaction = CustomizeButton(view=self, file="", text="Pure Reaction",
                                              x=self.width / 2 + 500, y=self.height / 1.5 - 300, theme=self.theme)
-        self.button_list.append(mode_pure_reaction)
+        self.ui_manager.add_ui_element(mode_pure_reaction)
 
     def on_draw(self):
         arcade.start_render()
@@ -536,7 +556,7 @@ class CustomizeView(arcade.View):
 def main():
     setup_window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, "MapGame - Setup")
     setup_window.set_mouse_visible(False)
-    screen_view = ScreenView(DEFAULT_PLAYER_SPRITE)
+    screen_view = ScreenView(player_sprite=DEFAULT_PLAYER_SPRITE)
     screen_view.setup()
     setup_window.show_view(screen_view)
     """menu_view = MenuView(background=DEFAULT_BACKGROUND, player_sprite=DEFAULT_PLAYER_SPRITE, target=DEFAULT_TARGET)
