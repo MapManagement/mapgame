@@ -27,13 +27,14 @@ def load_sprite_scales():
 # classes that will be used within the views
 class MenuButton(gui.UIFlatButton):
 
-    def __init__(self, view, text, x, y, open_view, font_color=arcade.color.WHITE, theme=None):
-        super().__init__(text=text, center_x=x, center_y=y, width=250, height=75, theme=theme)
+    def __init__(self, view, text, x, y, open_view, font_color=arcade.color.WHITE):
+        super().__init__(text=text, center_x=x, center_y=y, width=250, height=75)
         self.view = view
         self.font_color = font_color
         self.open_view = open_view
 
     def on_press(self):
+        self.view.ui_manager.purge_ui_elements()
         self.open_view.setup()
         self.view.window.show_view(self.open_view)
 
@@ -70,6 +71,7 @@ class CustomizeButton(gui.UIFlatButton):
             background = arcade.load_texture(f"sprites/{self.file}")
             menu_view = MenuView(background, self.view.player_sprite, self.view.target, self.view.height,
                                  self.view.width)
+            self.view.ui_manager.purge_ui_elements()
             menu_view.setup()
             self.view.window.show_view(menu_view)
         elif "speed" in self.file:
@@ -114,8 +116,6 @@ class ScreenView(arcade.View):
 
         self.height = 720
         self.width = 1280
-
-        self.style = None
 
         self.player_sprite = player_sprite
 
@@ -200,21 +200,10 @@ class MenuView(arcade.View):
 
         self.height = height
         self.width = width
-        self.theme = None
         self.background = background
 
         self.player_sprite = player_sprite
         self.target = target
-
-    def set_button_textures(self):
-        default = "sprites/button_default.png"
-        hover = "sprites/button_hover.png"
-        clicked = "sprites/button_locked.png"
-        self.theme.add_button_textures(default, hover, clicked)
-
-    def setup_theme(self):
-        """self.theme = arcade.Theme()"""
-        self.set_button_textures()
 
     def setup(self):
         self.set_buttons()
@@ -223,13 +212,30 @@ class MenuView(arcade.View):
         start_button = MenuButton(self, "Start Game", self.width / 2, self.height / 2,
                                   GameView(background=self.background, player_sprite=self.player_sprite,
                                            target=self.target, score=0, missed=0, height=self.height, width=self.width),
-                                  font_color=arcade.color.WHITE, theme=self.theme)
+                                  font_color=arcade.color.WHITE)
+        start_button.set_style_attrs(
+            font_color=arcade.color.WHITE,
+            bg_color=arcade.color.BLACK,
+            bg_color_hover=arcade.color.DAVY_GREY
+        )
+
         customize_button = MenuButton(self, "Customize", self.width / 2, self.height / 2 - 100,
                                       CustomizeView(background=self.background, player_sprite=self.player_sprite,
                                                     target=self.target, height=self.height, width=self.width),
-                                      font_color=arcade.color.WHITE, theme=self.theme)
+                                      font_color=arcade.color.WHITE)
+        customize_button.set_style_attrs(
+            font_color=arcade.color.WHITE,
+            bg_color=arcade.color.BLACK,
+            bg_color_hover=arcade.color.DAVY_GREY
+        )
+
         exit_button = ExitButton(self, "Exit Game", self.width / 2, self.height / 2 - 200,
-                                 font_color=arcade.color.WHITE, theme=self.theme)
+                                 font_color=arcade.color.WHITE)
+        exit_button.set_style_attrs(
+            font_color=arcade.color.WHITE,
+            bg_color=arcade.color.BLACK,
+            bg_color_hover=arcade.color.DAVY_GREY
+        )
 
         self.ui_manager.add_ui_element(start_button)
         self.ui_manager.add_ui_element(customize_button)
@@ -399,7 +405,7 @@ class PauseView(arcade.View):
         leave_button = MenuButton(self, "Back To Menu", self.width / 2, self.height / 2 - 100,
                                   MenuView(background=self.background, player_sprite=self.player_sprite,
                                            target=self.target, height=self.height, width=self.width),
-                                  arcade.color.WHITE, self.theme)
+                                  arcade.color.WHITE)
         self.ui_manager.add_ui_element(leave_button)
 
     def on_draw(self):
@@ -418,6 +424,7 @@ class PauseView(arcade.View):
         if symbol == arcade.key.ESCAPE:
             game_view = GameView(background=self.background, player_sprite=self.player_sprite, target=self.target,
                                  score=self.score, missed=self.missed, height=self.height, width=self.width)
+            self.ui_manager.purge_ui_elements()
             game_view.setup()
             self.window.show_view(game_view)
 
@@ -557,6 +564,7 @@ class CustomizeView(arcade.View):
         if symbol == arcade.key.ESCAPE:
             menu_view = MenuView(background=self.background, player_sprite=self.player_sprite, target=self.target,
                                  height=self.height, width=self.width)
+            self.ui_manager.purge_ui_elements()
             menu_view.setup()
             self.window.show_view(menu_view)
 
@@ -567,9 +575,6 @@ def main():
     screen_view = ScreenView(player_sprite=DEFAULT_PLAYER_SPRITE)
     screen_view.setup()
     setup_window.show_view(screen_view)
-    """menu_view = MenuView(background=DEFAULT_BACKGROUND, player_sprite=DEFAULT_PLAYER_SPRITE, target=DEFAULT_TARGET)
-    menu_view.setup()
-    window.show_view(menu_view)"""
     arcade.run()
 
 
