@@ -1,7 +1,6 @@
 import arcade
 import json
 import random
-import arcade_gui
 import time
 import timeit
 from arcade import gui
@@ -200,10 +199,16 @@ class MenuView(arcade.View):
 
         self.height = height
         self.width = width
+
         self.background = background
+        self.target = target
+
+        self.player_list = arcade.SpriteList()
 
         self.player_sprite = player_sprite
-        self.target = target
+        self.player_sprite.center_x = self.width / 2
+        self.player_sprite.center_y = self.height / 2
+        self.player_list.append(self.player_sprite)
 
     def setup(self):
         self.set_buttons()
@@ -245,7 +250,7 @@ class MenuView(arcade.View):
         arcade.start_render()
         arcade.draw_lrwh_rectangle_textured(0, 0, self.width, self.height, self.background)
         super().on_draw()
-        self.player_sprite.draw()
+        self.player_list.draw()
 
         arcade.draw_text("Game Menu", self.width / 2, self.height / 1.5,
                          arcade.color.WHITE, 50, anchor_x="center")
@@ -398,7 +403,6 @@ class PauseView(arcade.View):
         self.set_button_textures()
 
     def setup(self):
-
         self.set_buttons()
 
     def set_buttons(self):
@@ -441,23 +445,18 @@ class CustomizeView(arcade.View):
 
         self.height = height
         self.width = width
-        self.player_sprite = player_sprite
-        self.theme = None
+
         self.background = background
         self.target = target
 
-    def set_button_textures(self):
-        default = "sprites/button_default.png"
-        hover = "sprites/button_hover.png"
-        clicked = "sprites/button_locked.png"
-        self.theme.add_button_textures(default, hover, clicked)
+        self.player_list = arcade.SpriteList()
 
-    def setup_theme(self):
-        """self.theme = arcade.Theme()"""
-        self.set_button_textures()
+        self.player_sprite = player_sprite
+        self.player_sprite.center_x = self.width / 2
+        self.player_sprite.center_y = self.height / 2
+        self.player_list.append(self.player_sprite)
 
     def setup(self):
-
         self.set_mouse_speed()
         self.set_targets()
         self.set_crosshairs()
@@ -469,7 +468,7 @@ class CustomizeView(arcade.View):
                                      font_size=25)
         self.ui_manager.add_ui_element(mouse_speed_text)
 
-        speed_input = gui.UIInputBox(center_x=self.width / 2 - 750, center_y=self.height / 1.5 - 75, font_size=25,
+        speed_input = gui.UIInputBox(center_x=self.width / 2 - 500, center_y=self.height / 1.5 - 75, font_size=25,
                                      width=200, height=50)
         self.ui_manager.add_ui_element(speed_input)
 
@@ -478,11 +477,11 @@ class CustomizeView(arcade.View):
         self.ui_manager.add_ui_element(target_text)
 
         target_moehre = CustomizeButton(view=self, file="target_moehre.png", text="Moehre", x=self.width / 2 - 250,
-                                        y=self.height / 1.5 - 75, theme=self.theme)
+                                        y=self.height / 1.5 - 75)
         self.ui_manager.add_ui_element(target_moehre)
 
         target_default = CustomizeButton(view=self, file="target_default.png", text="Default", x=self.width / 2 - 250,
-                                         y=self.height / 1.5 - 150, theme=self.theme)
+                                         y=self.height / 1.5 - 150)
         self.ui_manager.add_ui_element(target_default)
 
     def set_crosshairs(self):
@@ -490,20 +489,19 @@ class CustomizeView(arcade.View):
         self.ui_manager.add_ui_element(crosshair_text)
 
         crossh_cross = CustomizeButton(view=self, file="crossh_cross.png", text="Cross", x=self.width / 2,
-                                       y=self.height / 1.5 - 75, theme=self.theme)
+                                       y=self.height / 1.5 - 75,)
         self.ui_manager.add_ui_element(crossh_cross)
 
         crossh_dot = CustomizeButton(view=self, file="crossh_dot.png", text="Dot", x=self.width / 2,
-                                     y=self.height / 1.5 - 150, theme=self.theme)
+                                     y=self.height / 1.5 - 150)
         self.ui_manager.add_ui_element(crossh_dot)
 
         crossh_circle = CustomizeButton(view=self, file="crossh_circle.png", text="Circle", x=self.width / 2,
-                                        y=self.height / 1.5 - 225,
-                                        theme=self.theme)
+                                        y=self.height / 1.5 - 225)
         self.ui_manager.add_ui_element(crossh_circle)
 
         crossh_cross_circle = CustomizeButton(view=self, file="crossh_cross_circle.png", text="Cross & Circle",
-                                              x=self.width / 2, y=self.height / 1.5 - 300, theme=self.theme)
+                                              x=self.width / 2, y=self.height / 1.5 - 300)
         self.ui_manager.add_ui_element(crossh_cross_circle)
 
     def set_backgrounds(self):
@@ -512,19 +510,19 @@ class CustomizeView(arcade.View):
         self.ui_manager.add_ui_element(background_text)
 
         background_clean = CustomizeButton(view=self, file="backgrounds/backg_clean.png", text="Clean",
-                                           x=self.width / 2 + 250, y=self.height / 1.5 - 75, theme=self.theme)
+                                           x=self.width / 2 + 250, y=self.height / 1.5 - 75)
         self.ui_manager.add_ui_element(background_clean)
 
         background_forest = CustomizeButton(view=self, file="backgrounds/backg_forest.png", text="Forest",
-                                            x=self.width / 2 + 250, y=self.height / 1.5 - 150, theme=self.theme)
+                                            x=self.width / 2 + 250, y=self.height / 1.5 - 150)
         self.ui_manager.add_ui_element(background_forest)
 
         background_mountains = CustomizeButton(view=self, file="backgrounds/backg_mountains.png", text="Mountains",
-                                               x=self.width / 2 + 250, y=self.height / 1.5 - 225, theme=self.theme)
+                                               x=self.width / 2 + 250, y=self.height / 1.5 - 225)
         self.ui_manager.add_ui_element(background_mountains)
 
         background_sea = CustomizeButton(view=self, file="backgrounds/backg_sea.png", text="Sea",
-                                         x=self.width / 2 + 250, y=self.height / 1.5 - 300, theme=self.theme)
+                                         x=self.width / 2 + 250, y=self.height / 1.5 - 300)
         self.ui_manager.add_ui_element(background_sea)
 
     def set_mode(self):
@@ -532,26 +530,26 @@ class CustomizeView(arcade.View):
         self.ui_manager.add_ui_element(mode_text)
 
         mode_clicking = CustomizeButton(view=self, file="", text="Clicking",
-                                        x=self.width / 2 + 500, y=self.height / 1.5 - 75, theme=self.theme)
+                                        x=self.width / 2 + 500, y=self.height / 1.5 - 75)
         self.ui_manager.add_ui_element(mode_clicking)
 
         mode_tracking = CustomizeButton(view=self, file="", text="Tracking",
-                                        x=self.width / 2 + 500, y=self.height / 1.5 - 150, theme=self.theme)
+                                        x=self.width / 2 + 500, y=self.height / 1.5 - 150)
         self.ui_manager.add_ui_element(mode_tracking)
 
         mode_flicking = CustomizeButton(view=self, file="", text="Flicking",
-                                        x=self.width / 2 + 500, y=self.height / 1.5 - 225, theme=self.theme)
+                                        x=self.width / 2 + 500, y=self.height / 1.5 - 225)
         self.ui_manager.add_ui_element(mode_flicking)
 
         mode_pure_reaction = CustomizeButton(view=self, file="", text="Pure Reaction",
-                                             x=self.width / 2 + 500, y=self.height / 1.5 - 300, theme=self.theme)
+                                             x=self.width / 2 + 500, y=self.height / 1.5 - 300)
         self.ui_manager.add_ui_element(mode_pure_reaction)
 
     def on_draw(self):
         arcade.start_render()
         arcade.draw_lrwh_rectangle_textured(0, 0, self.width, self.height, self.background)
         super().on_draw()
-        self.player_sprite.draw()
+        self.player_list.draw()
 
         arcade.draw_text("Customizations", self.width / 2, self.height / 1.1,
                          arcade.color.WHITE, 50, anchor_x="center")

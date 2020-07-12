@@ -19,7 +19,8 @@ to share your ideas, simply just "pull request".
 # ToDo
 ----
 - [ ] implementing more game modes
-- [ ] fixing player sprite bug when opening MenuView
+- [x] fixing player sprite bug when opening MenuView
 - [ ] improving texture quality of sprites and background
 - [ ] adding option for adjusting mouse sensitivity
 - [ ] importing custom sprites
+- [ ] new player sprite bug, when choosing a new crosshair
