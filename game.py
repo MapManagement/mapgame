@@ -66,6 +66,14 @@ class CustomizeButton(gui.UIFlatButton):
             new_player_sprite = arcade.Sprite(f"sprites/player_sprites/{self.file}",
                                               sprites_scales["sprites"]["player_sprites"][self.file])
             self.view.player_sprite = new_player_sprite
+            self.view.player_list[0] = self.view.player_sprite
+
+            menu_view = MenuView(self.view.background, self.view.player_sprite, self.view.target, self.view.height,
+                                 self.view.width)
+            self.view.ui_manager.purge_ui_elements()
+            menu_view.setup()
+            self.view.window.show_view(menu_view)
+
         elif "backg" in self.file:
             background = arcade.load_texture(f"sprites/{self.file}")
             menu_view = MenuView(background, self.view.player_sprite, self.view.target, self.view.height,

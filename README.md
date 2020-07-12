@@ -23,4 +23,4 @@ to share your ideas, simply just "pull request".
 - [ ] improving texture quality of sprites and background
 - [ ] adding option for adjusting mouse sensitivity
 - [ ] importing custom sprites
-- [ ] new player sprite bug, when choosing a new crosshair
+- [x] new player sprite bug, when choosing a new crosshair
