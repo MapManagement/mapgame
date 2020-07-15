@@ -24,3 +24,5 @@ to share your ideas, simply just "pull request".
 - [ ] adding option for adjusting mouse sensitivity
 - [ ] importing custom sprites
 - [x] new player sprite bug, when choosing a new crosshair
+- [ ] reducing loading times when switching views
+- [ ] crosshair in front of GUI elements

@@ -39,10 +39,10 @@ class MenuButton(gui.UIFlatButton):
 
 
 class ExitButton(gui.UIFlatButton):
-    def __init__(self, view, text, x=0, y=0, width=250, height=75, color=arcade.color.ROYAL_AZURE,
-                 font_color=arcade.color.BLACK, secondary_color=arcade.color.BLACK, theme=None):
-        super().__init__(text=text, center_x=x, center_y=y, width=width, height=height, face_color=color,
-                         font_color=font_color, highlight_color=secondary_color, theme=theme)
+    def __init__(self, view, text, x=0, y=0, width=250, height=75, font_color=arcade.color.BLACK,
+                 secondary_color=arcade.color.BLACK, theme=None):
+        super().__init__(text=text, center_x=x, center_y=y, width=width, height=height, font_color=font_color,
+                         highlight_color=secondary_color, theme=theme)
         self.view = view
         self.font_color = font_color
 
@@ -51,8 +51,8 @@ class ExitButton(gui.UIFlatButton):
 
 
 class CustomizeButton(gui.UIFlatButton):
-    def __init__(self, view, text, x, y, file, font_color=arcade.color.WHITE, theme=None):
-        super().__init__(text=text, center_x=x, center_y=y, width=200, height=50, theme=theme)
+    def __init__(self, view, text, x, y, file, font_color=arcade.color.WHITE):
+        super().__init__(text=text, center_x=x, center_y=y, width=200, height=50)
         self.font_color = font_color
         self.file = file
         self.view = view
@@ -88,9 +88,18 @@ class CustomizeButton(gui.UIFlatButton):
 
 
 class TextLabel(gui.UILabel):
-    def __init__(self, text, center_x=0, center_y=0, font_size=15, font_name="Calibri", color=arcade.color.WHITE):
-        super().__init__(text=text, center_x=center_x, center_y=center_y, font_size=font_size, font_name=font_name,
-                         color=color)
+    def __init__(self, text, center_x=0, center_y=0, font_size=15, font_name="Calibri"):
+        super().__init__(text=text, center_x=center_x, center_y=center_y, font_size=font_size, font_name=font_name)
+        self.set_style_attrs(font_color=arcade.color.WHITE,
+                             font_color_hover=arcade.color.WHITE)
+
+
+class SensSubmitButton(CustomizeButton):
+    def __init__(self, view, text, x, y):
+        super().__init__(view=view, text=text, x=x, y=y, file=None)
+
+    def on_press(self):
+        print("Test")
 
 
 class SubmitButton(gui.UIFlatButton):
@@ -479,6 +488,10 @@ class CustomizeView(arcade.View):
         speed_input = gui.UIInputBox(center_x=self.width / 2 - 500, center_y=self.height / 1.5 - 75, font_size=25,
                                      width=200, height=50)
         self.ui_manager.add_ui_element(speed_input)
+
+        speed_submit = SensSubmitButton(view=self, text="Submit Sens", x=self.width / 2 - 500,
+                                        y=self.height / 1.5 - 150)
+        self.ui_manager.add_ui_element(speed_submit)
 
     def set_targets(self):
         target_text = TextLabel(text="Targets", center_x=self.width / 2 - 250, center_y=self.height / 1.5, font_size=25)
