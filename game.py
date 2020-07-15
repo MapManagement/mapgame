@@ -95,11 +95,13 @@ class TextLabel(gui.UILabel):
 
 
 class SensSubmitButton(CustomizeButton):
-    def __init__(self, view, text, x, y):
+    def __init__(self, view, text, x, y, sensitivity):
         super().__init__(view=view, text=text, x=x, y=y, file=None)
 
+        self.sensitivity = sensitivity
+
     def on_press(self):
-        print("Test")
+        print(self.sensitivity)
 
 
 class SubmitButton(gui.UIFlatButton):
@@ -111,7 +113,6 @@ class SubmitButton(gui.UIFlatButton):
 
     def on_press(self):
         if self.screensize[0] != "" and self.screensize[1] != "":
-
             self.window.close()
 
             window = arcade.Window(int(self.screensize[0]), int(self.screensize[1]), fullscreen=True, title="MapGame")
@@ -486,11 +487,11 @@ class CustomizeView(arcade.View):
         self.ui_manager.add_ui_element(mouse_speed_text)
 
         speed_input = gui.UIInputBox(center_x=self.width / 2 - 500, center_y=self.height / 1.5 - 75, font_size=25,
-                                     width=200, height=50)
+                                     width=200, height=50, text="1", id="speed_box")
         self.ui_manager.add_ui_element(speed_input)
 
-        speed_submit = SensSubmitButton(view=self, text="Submit Sens", x=self.width / 2 - 500,
-                                        y=self.height / 1.5 - 150)
+        speed_submit = SensSubmitButton(view=self, text="Submit Sens", x=self.width / 2 - 500, y=self.height / 1.5 - 150
+                                        , sensitivity=self.ui_manager.find_by_id("speed_box").text)
         self.ui_manager.add_ui_element(speed_submit)
 
     def set_targets(self):
@@ -510,7 +511,7 @@ class CustomizeView(arcade.View):
         self.ui_manager.add_ui_element(crosshair_text)
 
         crossh_cross = CustomizeButton(view=self, file="crossh_cross.png", text="Cross", x=self.width / 2,
-                                       y=self.height / 1.5 - 75,)
+                                       y=self.height / 1.5 - 75, )
         self.ui_manager.add_ui_element(crossh_cross)
 
         crossh_dot = CustomizeButton(view=self, file="crossh_dot.png", text="Dot", x=self.width / 2,
