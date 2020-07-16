@@ -95,30 +95,32 @@ class TextLabel(gui.UILabel):
 
 
 class SensSubmitButton(CustomizeButton):
-    def __init__(self, view, text, x, y, sensitivity):
+    def __init__(self, view, text, x, y):
         super().__init__(view=view, text=text, x=x, y=y, file=None)
 
-        self.sensitivity = sensitivity
+        self.view = view
 
     def on_press(self):
-        print(self.sensitivity)
+        sensitivity = self.view.ui_manager.find_by_id("speed_box").text
 
 
 class SubmitButton(gui.UIFlatButton):
-    def __init__(self, text, center_x, center_y, width, height, id, screensize, window):
-        super().__init__(text=text, center_x=center_x, center_y=center_y, width=width, height=height, id=id)
-
-        self.screensize = screensize
-        self.window = window
+    def __init__(self, text, center_x, center_y, width, height, view):
+        super().__init__(text=text, center_x=center_x, center_y=center_y, width=width, height=height,
+                         id="submit_button")
+        self.view = view
 
     def on_press(self):
-        if self.screensize[0] != "" and self.screensize[1] != "":
-            self.window.close()
+        given_witdh = str(self.view.ui_manager.find_by_id("width_box").text)
+        given_height = str(self.view.ui_manager.find_by_id("height_box").text)
 
-            window = arcade.Window(int(self.screensize[0]), int(self.screensize[1]), fullscreen=True, title="MapGame")
+        if given_height != "" and given_witdh != "":
+            self.view.window.close()
+
+            window = arcade.Window(int(given_witdh), int(given_height), fullscreen=True, title="MapGame")
             window.set_mouse_visible(False)
             menu_view = MenuView(background=DEFAULT_BACKGROUND, player_sprite=DEFAULT_PLAYER_SPRITE,
-                                 target=DEFAULT_TARGET, height=int(self.screensize[1]), width=int(self.screensize[0]))
+                                 target=DEFAULT_TARGET, height=int(given_height), width=int(given_witdh))
             menu_view.setup()
             window.show_view(menu_view)
             arcade.run()
@@ -177,10 +179,7 @@ class ScreenView(arcade.View):
             center_y=int(self.height / 2) - 250,
             width=200,
             height=40,
-            id='submit_button',
-            screensize=[int(self.ui_manager.find_by_id("width_box").text),
-                        int(self.ui_manager.find_by_id("height_box").text)],
-            window=self.window
+            view=self
         )
         submit_button.set_style_attrs(
             font_color=arcade.color.WHITE,
@@ -490,8 +489,9 @@ class CustomizeView(arcade.View):
                                      width=200, height=50, text="1", id="speed_box")
         self.ui_manager.add_ui_element(speed_input)
 
-        speed_submit = SensSubmitButton(view=self, text="Submit Sens", x=self.width / 2 - 500, y=self.height / 1.5 - 150
-                                        , sensitivity=self.ui_manager.find_by_id("speed_box").text)
+        speed_submit = SensSubmitButton(view=self, text="Submit Sens", x=self.width / 2 - 500,
+                                        y=self.height / 1.5 - 150)
+
         self.ui_manager.add_ui_element(speed_submit)
 
     def set_targets(self):

@@ -26,4 +26,4 @@ to share your ideas, simply just "pull request".
 - [x] new player sprite bug, when choosing a new crosshair
 - [ ] reducing loading times when switching views
 - [ ] crosshair in front of GUI elements
-- [ ] removing bug: text of input boxes is not used
+- [x] removing bug: text of input boxes is not used
