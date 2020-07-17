@@ -32,6 +32,14 @@ class MenuButton(gui.UIFlatButton):
         self.font_color = font_color
         self.open_view = open_view
 
+        self.set_style_attrs(
+            font_color=arcade.color.WHITE,
+            bg_color=arcade.color.BLACK,
+            border_color=arcade.color.DAVY_GREY,
+            bg_color_hover=arcade.color.DAVY_GREY,
+            border_color_hover=arcade.color.BLACK
+        )
+
     def on_press(self):
         self.view.ui_manager.purge_ui_elements()
         self.open_view.setup()
@@ -46,6 +54,14 @@ class ExitButton(gui.UIFlatButton):
         self.view = view
         self.font_color = font_color
 
+        self.set_style_attrs(
+            font_color=arcade.color.WHITE,
+            bg_color=arcade.color.BLACK,
+            border_color=arcade.color.DAVY_GREY,
+            bg_color_hover=arcade.color.DAVY_GREY,
+            border_color_hover=arcade.color.BLACK
+        )
+
     def on_press(self):
         self.view.window.close()
 
@@ -53,9 +69,16 @@ class ExitButton(gui.UIFlatButton):
 class CustomizeButton(gui.UIFlatButton):
     def __init__(self, view, text, x, y, file, font_color=arcade.color.WHITE):
         super().__init__(text=text, center_x=x, center_y=y, width=200, height=50)
-        self.font_color = font_color
         self.file = file
         self.view = view
+
+        self.set_style_attrs(
+            font_color=arcade.color.WHITE,
+            bg_color=arcade.color.BLACK,
+            border_color=arcade.color.DAVY_GREY,
+            bg_color_hover=arcade.color.DAVY_GREY,
+            border_color_hover=arcade.color.BLACK
+        )
 
     def on_press(self):
         sprites_scales = load_sprite_scales()
@@ -110,6 +133,14 @@ class SubmitButton(gui.UIFlatButton):
                          id="submit_button")
         self.view = view
 
+        self.set_style_attrs(
+            font_color=arcade.color.WHITE,
+            bg_color=arcade.color.BLACK,
+            border_color=arcade.color.DAVY_GREY,
+            bg_color_hover=arcade.color.DAVY_GREY,
+            border_color_hover=arcade.color.BLACK
+        )
+
     def on_press(self):
         given_witdh = str(self.view.ui_manager.find_by_id("width_box").text)
         given_height = str(self.view.ui_manager.find_by_id("height_box").text)
@@ -150,7 +181,9 @@ class ScreenView(arcade.View):
         input_box_width.set_style_attrs(
             font_color=arcade.color.WHITE,
             bg_color=arcade.color.BLACK,
-            bg_color_hover=arcade.color.DAVY_GREY
+            border_color=arcade.color.DAVY_GREY,
+            bg_color_hover=arcade.color.DAVY_GREY,
+            border_color_hover=arcade.color.BLACK
         )
 
         input_box_height = gui.UIInputBox(
@@ -164,7 +197,9 @@ class ScreenView(arcade.View):
         input_box_height.set_style_attrs(
             font_color=arcade.color.WHITE,
             bg_color=arcade.color.BLACK,
-            bg_color_hover=arcade.color.DAVY_GREY
+            border_color=arcade.color.DAVY_GREY,
+            bg_color_hover=arcade.color.DAVY_GREY,
+            border_color_hover=arcade.color.BLACK
         )
 
         self.ui_manager.add_ui_element(input_box_width)
@@ -180,11 +215,6 @@ class ScreenView(arcade.View):
             width=200,
             height=40,
             view=self
-        )
-        submit_button.set_style_attrs(
-            font_color=arcade.color.WHITE,
-            bg_color=arcade.color.BLACK,
-            bg_color_hover=arcade.color.DAVY_GREY
         )
         submit_button.on_click()
         self.ui_manager.add_ui_element(submit_button)
@@ -235,29 +265,14 @@ class MenuView(arcade.View):
                                   GameView(background=self.background, player_sprite=self.player_sprite,
                                            target=self.target, score=0, missed=0, height=self.height, width=self.width),
                                   font_color=arcade.color.WHITE)
-        start_button.set_style_attrs(
-            font_color=arcade.color.WHITE,
-            bg_color=arcade.color.BLACK,
-            bg_color_hover=arcade.color.DAVY_GREY
-        )
 
         customize_button = MenuButton(self, "Customize", self.width / 2, self.height / 2 - 100,
                                       CustomizeView(background=self.background, player_sprite=self.player_sprite,
                                                     target=self.target, height=self.height, width=self.width),
                                       font_color=arcade.color.WHITE)
-        customize_button.set_style_attrs(
-            font_color=arcade.color.WHITE,
-            bg_color=arcade.color.BLACK,
-            bg_color_hover=arcade.color.DAVY_GREY
-        )
 
         exit_button = ExitButton(self, "Exit Game", self.width / 2, self.height / 2 - 200,
                                  font_color=arcade.color.WHITE)
-        exit_button.set_style_attrs(
-            font_color=arcade.color.WHITE,
-            bg_color=arcade.color.BLACK,
-            bg_color_hover=arcade.color.DAVY_GREY
-        )
 
         self.ui_manager.add_ui_element(start_button)
         self.ui_manager.add_ui_element(customize_button)
@@ -308,16 +323,6 @@ class GameView(arcade.View):
         self.player_sprite.center_x = self.width / 2
         self.player_sprite.center_y = self.height / 2
         self.player_list.append(self.player_sprite)
-
-    def set_button_textures(self):
-        default = "sprites/button_default.png"
-        hover = "sprites/button_hover.png"
-        clicked = "sprites/button_locked.png"
-        self.theme.add_button_textures(default, hover, clicked)
-
-    def setup_theme(self):
-        """self.theme = arcade.Theme()"""
-        self.set_button_textures()
 
     def setup(self):
         self.target_list = arcade.SpriteList()
@@ -409,16 +414,6 @@ class PauseView(arcade.View):
         self.player_sprite.center_y = self.height / 2
         self.player_list.append(self.player_sprite)
 
-    def set_button_textures(self):
-        default = "sprites/button_default.png"
-        hover = "sprites/button_hover.png"
-        clicked = "sprites/button_locked.png"
-        self.theme.add_button_textures(default, hover, clicked)
-
-    def setup_theme(self):
-        """self.theme = arcade.Theme()"""
-        self.set_button_textures()
-
     def setup(self):
         self.set_buttons()
 
@@ -488,6 +483,13 @@ class CustomizeView(arcade.View):
         speed_input = gui.UIInputBox(center_x=self.width / 2 - 500, center_y=self.height / 1.5 - 75, font_size=25,
                                      width=200, height=50, text="1", id="speed_box")
         self.ui_manager.add_ui_element(speed_input)
+        speed_input.set_style_attrs(
+            font_color=arcade.color.WHITE,
+            bg_color=arcade.color.BLACK,
+            border_color=arcade.color.DAVY_GREY,
+            bg_color_hover=arcade.color.DAVY_GREY,
+            border_color_hover=arcade.color.BLACK
+        )
 
         speed_submit = SensSubmitButton(view=self, text="Submit Sens", x=self.width / 2 - 500,
                                         y=self.height / 1.5 - 150)
