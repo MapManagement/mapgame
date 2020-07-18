@@ -67,8 +67,8 @@ class ExitButton(gui.UIFlatButton):
 
 
 class CustomizeButton(gui.UIFlatButton):
-    def __init__(self, view, text, x, y, file, font_color=arcade.color.WHITE):
-        super().__init__(text=text, center_x=x, center_y=y, width=200, height=50)
+    def __init__(self, view, text, x, y, file, id, font_color=arcade.color.WHITE):
+        super().__init__(text=text, center_x=x, center_y=y, width=200, height=50, id=id)
         self.file = file
         self.view = view
 
@@ -104,8 +104,6 @@ class CustomizeButton(gui.UIFlatButton):
             self.view.ui_manager.purge_ui_elements()
             menu_view.setup()
             self.view.window.show_view(menu_view)
-        elif "speed" in self.file:
-            pass
         else:
             pass
 
@@ -119,7 +117,7 @@ class TextLabel(gui.UILabel):
 
 class SensSubmitButton(CustomizeButton):
     def __init__(self, view, text, x, y):
-        super().__init__(view=view, text=text, x=x, y=y, file=None)
+        super().__init__(view=view, text=text, x=x, y=y, file=None, id="sens_submit_button")
 
         self.view = view
 
@@ -474,6 +472,8 @@ class CustomizeView(arcade.View):
         self.set_crosshairs()
         self.set_backgrounds()
         self.set_mode()
+        self.set_locked_texture(target_id="target_default", crosshair_id="crossh_cross",
+                                background_id="background_clean", mode_id="mode_clicking")
 
     def set_mouse_speed(self):
         mouse_speed_text = TextLabel(text="Sensitivity", center_x=self.width / 2 - 500, center_y=self.height / 1.5,
@@ -501,11 +501,11 @@ class CustomizeView(arcade.View):
         self.ui_manager.add_ui_element(target_text)
 
         target_moehre = CustomizeButton(view=self, file="target_moehre.png", text="Moehre", x=self.width / 2 - 250,
-                                        y=self.height / 1.5 - 75)
+                                        y=self.height / 1.5 - 75, id="target_moehre")
         self.ui_manager.add_ui_element(target_moehre)
 
         target_default = CustomizeButton(view=self, file="target_default.png", text="Default", x=self.width / 2 - 250,
-                                         y=self.height / 1.5 - 150)
+                                         y=self.height / 1.5 - 150, id="target_default")
         self.ui_manager.add_ui_element(target_default)
 
     def set_crosshairs(self):
@@ -513,19 +513,19 @@ class CustomizeView(arcade.View):
         self.ui_manager.add_ui_element(crosshair_text)
 
         crossh_cross = CustomizeButton(view=self, file="crossh_cross.png", text="Cross", x=self.width / 2,
-                                       y=self.height / 1.5 - 75, )
+                                       y=self.height / 1.5 - 75, id="crossh_cross")
         self.ui_manager.add_ui_element(crossh_cross)
 
         crossh_dot = CustomizeButton(view=self, file="crossh_dot.png", text="Dot", x=self.width / 2,
-                                     y=self.height / 1.5 - 150)
+                                     y=self.height / 1.5 - 150, id="crossh_dot")
         self.ui_manager.add_ui_element(crossh_dot)
 
         crossh_circle = CustomizeButton(view=self, file="crossh_circle.png", text="Circle", x=self.width / 2,
-                                        y=self.height / 1.5 - 225)
+                                        y=self.height / 1.5 - 225, id="crossh_circle")
         self.ui_manager.add_ui_element(crossh_circle)
 
         crossh_cross_circle = CustomizeButton(view=self, file="crossh_cross_circle.png", text="Cross & Circle",
-                                              x=self.width / 2, y=self.height / 1.5 - 300)
+                                              x=self.width / 2, y=self.height / 1.5 - 300, id="crossh_cross_circle")
         self.ui_manager.add_ui_element(crossh_cross_circle)
 
     def set_backgrounds(self):
@@ -534,19 +534,20 @@ class CustomizeView(arcade.View):
         self.ui_manager.add_ui_element(background_text)
 
         background_clean = CustomizeButton(view=self, file="backgrounds/backg_clean.png", text="Clean",
-                                           x=self.width / 2 + 250, y=self.height / 1.5 - 75)
+                                           x=self.width / 2 + 250, y=self.height / 1.5 - 75, id="background_clean")
         self.ui_manager.add_ui_element(background_clean)
 
         background_forest = CustomizeButton(view=self, file="backgrounds/backg_forest.png", text="Forest",
-                                            x=self.width / 2 + 250, y=self.height / 1.5 - 150)
+                                            x=self.width / 2 + 250, y=self.height / 1.5 - 150, id="background_forest")
         self.ui_manager.add_ui_element(background_forest)
 
         background_mountains = CustomizeButton(view=self, file="backgrounds/backg_mountains.png", text="Mountains",
-                                               x=self.width / 2 + 250, y=self.height / 1.5 - 225)
+                                               x=self.width / 2 + 250, y=self.height / 1.5 - 225,
+                                               id="background_mountains")
         self.ui_manager.add_ui_element(background_mountains)
 
         background_sea = CustomizeButton(view=self, file="backgrounds/backg_sea.png", text="Sea",
-                                         x=self.width / 2 + 250, y=self.height / 1.5 - 300)
+                                         x=self.width / 2 + 250, y=self.height / 1.5 - 300, id="background_sea")
         self.ui_manager.add_ui_element(background_sea)
 
     def set_mode(self):
@@ -554,20 +555,36 @@ class CustomizeView(arcade.View):
         self.ui_manager.add_ui_element(mode_text)
 
         mode_clicking = CustomizeButton(view=self, file="", text="Clicking",
-                                        x=self.width / 2 + 500, y=self.height / 1.5 - 75)
+                                        x=self.width / 2 + 500, y=self.height / 1.5 - 75, id="mode_clicking")
         self.ui_manager.add_ui_element(mode_clicking)
 
         mode_tracking = CustomizeButton(view=self, file="", text="Tracking",
-                                        x=self.width / 2 + 500, y=self.height / 1.5 - 150)
+                                        x=self.width / 2 + 500, y=self.height / 1.5 - 150, id="mode_tracking")
         self.ui_manager.add_ui_element(mode_tracking)
 
         mode_flicking = CustomizeButton(view=self, file="", text="Flicking",
-                                        x=self.width / 2 + 500, y=self.height / 1.5 - 225)
+                                        x=self.width / 2 + 500, y=self.height / 1.5 - 225, id="mode_flicking")
         self.ui_manager.add_ui_element(mode_flicking)
 
         mode_pure_reaction = CustomizeButton(view=self, file="", text="Pure Reaction",
-                                             x=self.width / 2 + 500, y=self.height / 1.5 - 300)
+                                             x=self.width / 2 + 500, y=self.height / 1.5 - 300, id="mode_pure_reaction")
         self.ui_manager.add_ui_element(mode_pure_reaction)
+
+    def set_locked_texture(self, target_id, crosshair_id, background_id, mode_id):
+        locked_target: gui.UIElement = self.ui_manager.find_by_id(target_id)
+        locked_crosshair: gui.UIElement = self.ui_manager.find_by_id(crosshair_id)
+        locked_background: gui.UIElement = self.ui_manager.find_by_id(background_id)
+        locked_mode: gui.UIElement = self.ui_manager.find_by_id(mode_id)
+
+        locked_list = [locked_target, locked_crosshair, locked_background, locked_mode]
+
+        for locked_button in locked_list:
+            locked_button.set_style_attrs(
+                bg_color=arcade.color.ASH_GREY,
+                border_color=arcade.color.DAVY_GREY,
+                bg_color_hover=arcade.color.ASH_GREY,
+                border_color_hover=arcade.color.DAVY_GREY
+            )
 
     def on_draw(self):
         arcade.start_render()
