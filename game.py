@@ -472,8 +472,6 @@ class CustomizeView(arcade.View):
         self.set_crosshairs()
         self.set_backgrounds()
         self.set_mode()
-        self.set_locked_texture(target_id="target_default", crosshair_id="crossh_cross",
-                                background_id="background_clean", mode_id="mode_clicking")
 
     def set_mouse_speed(self):
         mouse_speed_text = TextLabel(text="Sensitivity", center_x=self.width / 2 - 500, center_y=self.height / 1.5,
@@ -569,22 +567,6 @@ class CustomizeView(arcade.View):
         mode_pure_reaction = CustomizeButton(view=self, file="", text="Pure Reaction",
                                              x=self.width / 2 + 500, y=self.height / 1.5 - 300, id="mode_pure_reaction")
         self.ui_manager.add_ui_element(mode_pure_reaction)
-
-    def set_locked_texture(self, target_id, crosshair_id, background_id, mode_id):
-        locked_target: gui.UIElement = self.ui_manager.find_by_id(target_id)
-        locked_crosshair: gui.UIElement = self.ui_manager.find_by_id(crosshair_id)
-        locked_background: gui.UIElement = self.ui_manager.find_by_id(background_id)
-        locked_mode: gui.UIElement = self.ui_manager.find_by_id(mode_id)
-
-        locked_list = [locked_target, locked_crosshair, locked_background, locked_mode]
-
-        for locked_button in locked_list:
-            locked_button.set_style_attrs(
-                bg_color=arcade.color.ASH_GREY,
-                border_color=arcade.color.DAVY_GREY,
-                bg_color_hover=arcade.color.ASH_GREY,
-                border_color_hover=arcade.color.DAVY_GREY
-            )
 
     def on_draw(self):
         arcade.start_render()
