@@ -506,6 +506,10 @@ class CustomizeView(arcade.View):
                                          y=self.height / 1.5 - 150, id="target_default")
         self.ui_manager.add_ui_element(target_default)
 
+        target_smiley = CustomizeButton(view=self, file="target_smiley.png", text="Smiley", x=self.width / 2 - 250,
+                                         y=self.height / 1.5 - 225, id="target_smiley")
+        self.ui_manager.add_ui_element(target_smiley)
+
     def set_crosshairs(self):
         crosshair_text = TextLabel(text="Crosshairs", center_x=self.width / 2, center_y=self.height / 1.5, font_size=25)
         self.ui_manager.add_ui_element(crosshair_text)
